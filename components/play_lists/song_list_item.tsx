@@ -1,3 +1,4 @@
+import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, Text, View } from "react-native";
 type SongListItemProps = {
@@ -9,12 +10,12 @@ type SongListItemProps = {
     duration: number;
   };
 };
-export default function SongListItem({song}: SongListItemProps) {
+export default function SongListItem({ song }: SongListItemProps) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       <Image
         source={{
-          uri: song.cover_url
+          uri: song.cover_url,
         }}
         style={{ width: 50, height: 50 }}
       />
@@ -22,6 +23,7 @@ export default function SongListItem({song}: SongListItemProps) {
         <Text>{song.title}</Text>
         <Text style={{ color: "gray", fontSize: 13 }}>{song.artist}</Text>
       </View>
+      <Text>{formatTime(song.duration)}</Text>
       <Ionicons name="heart" size={24} color="#FF5A3C" />
     </View>
   );
