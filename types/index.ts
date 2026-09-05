@@ -23,3 +23,40 @@ export interface User {
   name: string;
   email: string;
 }
+
+export interface Artist {
+  id: string;
+  name: string;
+  imageUrl: string;
+  genre?: string;
+  songCount?: number;
+}
+
+export interface Album {
+  id: string;
+  title: string;
+  artist: string;
+  coverUrl: string;
+  year?: number;
+  songCount?: number;
+}
+
+export type SearchCategoryType = 'all' | 'songs' | 'artists' | 'albums' | 'playlists';
+
+export interface SearchResult {
+  type: 'song' | 'artist' | 'album' | 'playlist';
+  item: Song | Artist | Album | Playlist;
+}
+
+export interface SearchResponse {
+  results: SearchResult[];
+  query: string;
+  category: SearchCategoryType;
+  totalCount: number;
+}
+
+export interface RecentSearch {
+  id: string;
+  query: string;
+  timestamp: number;
+}
