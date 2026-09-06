@@ -1,6 +1,7 @@
 import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
 type SongListItemProps = {
   song: {
     id: number;
@@ -11,6 +12,7 @@ type SongListItemProps = {
   };
 };
 export default function SongListItem({ song }: SongListItemProps) {
+  const [isLiked, setIsLiked] = useState(false);
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       <Image
@@ -24,7 +26,9 @@ export default function SongListItem({ song }: SongListItemProps) {
         <Text style={{ color: "gray", fontSize: 13 }}>{song.artist}</Text>
       </View>
       <Text>{formatTime(song.duration)}</Text>
-      <Ionicons name="heart" size={24} color="#FF5A3C" />
+      <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+        <Ionicons name="heart" size={24} color={isLiked ? "#FF5A3C" : "gray"} />
+      </TouchableOpacity>
     </View>
   );
 }
