@@ -14,14 +14,8 @@ type SongListItemProps = {
 export default function SongListItem({ song }: SongListItemProps) {
   const [isLiked, setIsLiked] = useState(false);
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-      }}
-    >
+    
+        <View style={styles.row}>
       <Image
         source={{
           uri: song.cover_url,
@@ -36,7 +30,11 @@ export default function SongListItem({ song }: SongListItemProps) {
         {formatTime(song.duration)}
       </Text>
       <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
-        <Ionicons name="heart" size={24} color={isLiked ? "#FF5A3C" : "gray"} />
+        <Ionicons
+          name={isLiked ? "heart" : "heart-outline"}
+          size={24}
+          color={isLiked ? "#FF5A3C" : "gray"}
+        />
       </TouchableOpacity>
     </View>
   );
