@@ -1,7 +1,7 @@
 import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 type SongListItemProps = {
   song: {
     id: number;
@@ -14,18 +14,27 @@ type SongListItemProps = {
 export default function SongListItem({ song }: SongListItemProps) {
   const [isLiked, setIsLiked] = useState(false);
   return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+      }}
+    >
       <Image
         source={{
           uri: song.cover_url,
         }}
-        style={{ width: 50, height: 50 }}
+        style={{ width: 56, height: 56, borderRadius: 8 }}
       />
-      <View>
-        <Text>{song.title}</Text>
+      <View style={{ marginLeft: 12, flex: 1 }}>
+        <Text style={{ fontWeight: "600", fontSize: 15 }}>{song.title}</Text>
         <Text style={{ color: "gray", fontSize: 13 }}>{song.artist}</Text>
       </View>
-      <Text>{formatTime(song.duration)}</Text>
+      <Text style={{ color: "gray", fontSize: 13 }}>
+        {formatTime(song.duration)}
+      </Text>
       <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
         <Ionicons name="heart" size={24} color={isLiked ? "#FF5A3C" : "gray"} />
       </TouchableOpacity>
