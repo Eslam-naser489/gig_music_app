@@ -22,3 +22,19 @@ export async function getPlaylists() {
 
   return response.json();
 }
+export async function createPlaylist(name: string) {
+  const response = await fetch(`${ApiConfig.baseUrl}/playlists/`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create playlist");
+  }
+
+  return response.json();
+}
