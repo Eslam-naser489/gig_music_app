@@ -38,3 +38,13 @@ export async function createPlaylist(name: string) {
 
   return response.json();
 }
+export async function deletePlaylist(id: number) {
+  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${id}/`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${TOKEN}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete playlist");
+  }
+}

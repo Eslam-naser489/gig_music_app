@@ -1,5 +1,9 @@
 import PlaylistCard from "@/components/play_lists/play_list_card";
-import { createPlaylist, getPlaylists } from "@/services/play_list_service";
+import {
+    createPlaylist,
+    deletePlaylist,
+    getPlaylists,
+} from "@/services/play_list_service";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -19,6 +23,11 @@ export default function PlayList() {
   const [modalVisible, setModalVisible] = useState(false);
   const [newName, setNewName] = useState("");
   const router = useRouter();
+  const handleDelete = (id: number) => {
+    setPlaylists(playlists.filter((p) => p.id !== id));
+
+    deletePlaylist(id).catch(() => setError("فشل حذف قائمة التشغيل"));
+  };
   const handleCreate = () => {
     createPlaylist(newName)
       .then((created) => {
@@ -53,6 +62,7 @@ export default function PlayList() {
           <PlaylistCard
             playlist={item}
             onPress={() => router.push(`/playlists/${item.id}`)}
+            onDelete={() => handleDelete(item.id)}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
