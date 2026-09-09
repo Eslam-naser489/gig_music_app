@@ -1,5 +1,6 @@
 import PlaylistCard from "@/components/play_lists/play_list_card";
 import { getPlaylists } from "@/services/play_list_service";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, SafeAreaView, Text } from "react-native";
 
@@ -7,6 +8,7 @@ export default function PlayList() {
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
   useEffect(() => {
     getPlaylists()
       .then((data) => setPlaylists(data))
@@ -21,7 +23,10 @@ export default function PlayList() {
       <FlatList
         data={playlists}
         renderItem={({ item }) => (
-          <PlaylistCard playlist={item} onPress={() => {}} />
+          <PlaylistCard
+            playlist={item}
+            onPress={() => router.push(`/playlists/${item.id}`)}
+          />
         )}
         keyExtractor={(item) => item.id.toString()}
       />
