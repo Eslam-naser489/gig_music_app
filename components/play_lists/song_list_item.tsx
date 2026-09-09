@@ -1,8 +1,9 @@
 import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 type SongListItemProps = {
+  isLiked: boolean;
+  onLikePress: () => void;
   song: {
     id: number;
     title: string;
@@ -11,11 +12,13 @@ type SongListItemProps = {
     duration: number;
   };
 };
-export default function SongListItem({ song }: SongListItemProps) {
-  const [isLiked, setIsLiked] = useState(false);
+export default function SongListItem({
+  song,
+  isLiked,
+  onLikePress,
+}: SongListItemProps) {
   return (
-    
-        <View style={styles.row}>
+    <View style={styles.row}>
       <Image
         source={{
           uri: song.cover_url,
@@ -29,7 +32,7 @@ export default function SongListItem({ song }: SongListItemProps) {
       <Text style={{ color: "gray", fontSize: 13 }}>
         {formatTime(song.duration)}
       </Text>
-      <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+      <TouchableOpacity onPress={onLikePress}>
         <Ionicons
           name={isLiked ? "heart" : "heart-outline"}
           size={24}
@@ -39,3 +42,13 @@ export default function SongListItem({ song }: SongListItemProps) {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+});
