@@ -1,8 +1,7 @@
-const BASE_URL = "https://musicapp-production-bcd8.up.railway.app/api";
-const TOKEN = "...";
+import { ApiConfig, TOKEN } from "@/constants/api";
 
 export async function getPlaylists() {
-  const response = await fetch(`${BASE_URL}/playlists/`, {
+ const response = await fetch(`${ApiConfig.baseUrl}/playlists/`, {
     headers: { Authorization: `Bearer ${TOKEN}` },
   });
 

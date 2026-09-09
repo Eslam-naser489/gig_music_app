@@ -3,7 +3,7 @@ import { getLikedSongs, toggleLikeApi } from "@/services/liked_service";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, SafeAreaView, Text } from "react-native";
 export default function LikedSongs() {
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [likedIds, setLikedIds] = useState<number[]>([]);
