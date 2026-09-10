@@ -48,3 +48,25 @@ export async function deletePlaylist(id: number) {
     throw new Error("Failed to delete playlist");
   }
 }
+export async function removeTrackFromPlaylist(
+  playlistId: string,
+  trackId: number,
+) {
+  const response = await fetch(
+    `${ApiConfig.baseUrl}/playlists/${playlistId}/remove_track/`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ track_id: trackId }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to remove track");
+  }
+
+  return response.json();
+}
