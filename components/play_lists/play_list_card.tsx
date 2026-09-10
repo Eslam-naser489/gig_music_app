@@ -8,11 +8,13 @@ type PlaylistCardProps = {
   };
   onPress: () => void;
   onDelete: () => void;
+  onRename: () => void;
 };
 export default function PlaylistCard({
   playlist,
   onPress,
   onDelete,
+  onRename,
 }: PlaylistCardProps) {
   return (
     <TouchableOpacity
@@ -32,6 +34,9 @@ export default function PlaylistCard({
           {playlist.track_count} tracks
         </Text>
       </View>
+      <TouchableOpacity onPress={onRename} style={{ padding: 8 }}>
+        <Ionicons name="pencil-outline" size={20} color="gray" />
+      </TouchableOpacity>
       <TouchableOpacity onPress={onDelete} style={{ padding: 8 }}>
         <Ionicons name="trash-outline" size={20} color="gray" />
       </TouchableOpacity>

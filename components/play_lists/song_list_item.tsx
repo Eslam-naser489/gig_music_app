@@ -4,6 +4,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 type SongListItemProps = {
   isLiked: boolean;
   onLikePress: () => void;
+  iconName?: "heart" | "heart-outline" | "remove-circle-outline";
   song: {
     id: number;
     title: string;
@@ -16,6 +17,7 @@ export default function SongListItem({
   song,
   isLiked,
   onLikePress,
+  iconName,
 }: SongListItemProps) {
   return (
     <View style={styles.row}>
@@ -34,7 +36,7 @@ export default function SongListItem({
       </Text>
       <TouchableOpacity onPress={onLikePress}>
         <Ionicons
-          name={isLiked ? "heart" : "heart-outline"}
+          name={iconName || (isLiked ? "heart" : "heart-outline")}
           size={24}
           color={isLiked ? "#FF5A3C" : "gray"}
         />

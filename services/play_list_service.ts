@@ -70,3 +70,15 @@ export async function removeTrackFromPlaylist(
 
   return response.json();
 }
+export async function renamePlaylist(id: number, name: string) {
+  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${id}/`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+  if (!response.ok) throw new Error("Failed to rename playlist");
+  return response.json();
+}
