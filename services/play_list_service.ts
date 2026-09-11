@@ -82,3 +82,23 @@ export async function renamePlaylist(id: number, name: string) {
   if (!response.ok) throw new Error("Failed to rename playlist");
   return response.json();
 }
+export async function addTrackToPlaylist(playlistId: string, trackId: number) {
+  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${playlistId}/add_track/`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ track_id: trackId }),
+  });
+  if (!response.ok) throw new Error("Failed to add track");
+  return response.json();
+}
+
+export async function getAllTracks() {
+  const response = await fetch(`${ApiConfig.baseUrl}/tracks/?limit=30`, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+  });
+  if (!response.ok) throw new Error("Failed to fetch tracks");
+  return response.json();
+}
