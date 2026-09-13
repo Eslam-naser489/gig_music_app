@@ -16,7 +16,10 @@ export default function LikedSongs() {
       .catch(() => setError("فشل تحميل الأغاني"))
       .finally(() => setLoading(false));
   }, []);
-
+  const handleLikePress = (id: number) => {
+    toggleLike(id);
+    setSongs(songs.filter((s) => s.id !== id));
+  };
   return (
     <SafeAreaView>
       {loading && <ActivityIndicator size="large" />}
@@ -29,7 +32,7 @@ export default function LikedSongs() {
           <SongListItem
             song={item}
             isLiked={likedIds.includes(item.id)}
-            onLikePress={() => toggleLike(item.id)}
+            onLikePress={() => handleLikePress(item.id)}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
