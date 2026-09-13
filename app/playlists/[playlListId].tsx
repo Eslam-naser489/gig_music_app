@@ -7,6 +7,7 @@ import {
 } from "@/services/play_list_service";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
+import { Colors } from "@/constants/colors";
 import {
   ActivityIndicator,
   FlatList,

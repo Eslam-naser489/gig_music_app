@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 type PlaylistCardProps = {
@@ -25,20 +26,37 @@ export default function PlaylistCard({
         paddingVertical: 14,
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderBottomColor: Colors.border,
       }}
     >
+      <View
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 8,
+          backgroundColor: Colors.accentLight,
+          alignItems: "center",
+          justifyContent: "center",
+          marginRight: 12,
+        }}
+      >
+        <Ionicons name="musical-notes" size={26} color={Colors.accent} />
+      </View>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontWeight: "600", fontSize: 16 }}>{playlist.name}</Text>
-        <Text style={{ color: "gray", fontSize: 13 }}>
+        <Text
+          style={{ fontWeight: "600", fontSize: 16, color: Colors.textPrimary }}
+        >
+          {playlist.name}
+        </Text>
+        <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
           {playlist.track_count} tracks
         </Text>
       </View>
       <TouchableOpacity onPress={onRename} style={{ padding: 8 }}>
-        <Ionicons name="pencil-outline" size={20} color="gray" />
+        <Ionicons name="pencil-outline" size={20} color={Colors.textSecondary} />
       </TouchableOpacity>
       <TouchableOpacity onPress={onDelete} style={{ padding: 8 }}>
-        <Ionicons name="trash-outline" size={20} color="gray" />
+        <Ionicons name="trash-outline" size={20} color={Colors.textSecondary} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

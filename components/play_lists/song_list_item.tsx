@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors";
 import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -28,17 +29,23 @@ export default function SongListItem({
         style={{ width: 56, height: 56, borderRadius: 8 }}
       />
       <View style={{ marginLeft: 12, flex: 1 }}>
-        <Text style={{ fontWeight: "600", fontSize: 15 }}>{song.title}</Text>
-        <Text style={{ color: "gray", fontSize: 13 }}>{song.artist}</Text>
+        <Text
+          style={{ fontWeight: "600", fontSize: 15, color: Colors.textPrimary }}
+        >
+          {song.title}
+        </Text>
+        <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
+          {song.artist}
+        </Text>
       </View>
-      <Text style={{ color: "gray", fontSize: 13 }}>
+      <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
         {formatTime(song.duration)}
       </Text>
       <TouchableOpacity onPress={onLikePress}>
         <Ionicons
           name={iconName || (isLiked ? "heart" : "heart-outline")}
           size={24}
-          color={isLiked ? "#FF5A3C" : "gray"}
+          color={isLiked ? Colors.accent : Colors.textSecondary}
         />
       </TouchableOpacity>
     </View>
@@ -51,6 +58,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: Colors.border,
   },
 });
