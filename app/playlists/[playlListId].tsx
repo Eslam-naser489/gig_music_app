@@ -1,20 +1,20 @@
 import SongListItem from "@/components/play_lists/song_list_item";
 import {
-    addTrackToPlaylist,
-    getAllTracks,
-    getPlaylistById,
-    removeTrackFromPlaylist,
+  addTrackToPlaylist,
+  getAllTracks,
+  getPlaylistById,
+  removeTrackFromPlaylist,
 } from "@/services/play_list_service";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Modal,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 export default function PlaylistDetail() {
   const { playlListId } = useLocalSearchParams();
@@ -79,6 +79,7 @@ export default function PlaylistDetail() {
                 song={item}
                 isLiked={false}
                 onLikePress={() => handleRemoveTrack(item.id)}
+                iconName="remove-circle-outline"
               />
             )}
             keyExtractor={(item) => item.id.toString()}
