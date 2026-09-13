@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
 import { getLikedSongs, toggleLikeApi } from "@/services/liked_service";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type LikedSongsContextType = {
   likedIds: number[];
@@ -11,13 +11,20 @@ const LikedSongsContext = createContext<LikedSongsContextType>({
   toggleLike: () => {},
 });
 
-export function LikedSongsProvider({ children }: { children: React.ReactNode }) {
+export function LikedSongsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [likedIds, setLikedIds] = useState<number[]>([]);
 
   useEffect(() => {
     getLikedSongs()
-      .then((data) => setLikedIds(data.map((s: any) => s.id)))
-      .catch(() => {});
+      .then((data) => {
+        console.log("PROVIDER DATA:", data);
+        setLikedIds(data.map((s: any) => s.id));
+      })
+      .catch((e) => console.log("PROVIDER ERROR:", e));
   }, []);
 
   const toggleLike = (id: number) => {
