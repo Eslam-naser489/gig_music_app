@@ -8,7 +8,7 @@ export default function LikedSongs() {
   const [songs, setSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { likedIds, toggleLike } = useLikedSongs();
+  const { likedIds, toggleLike, error: contextError } = useLikedSongs();
 
   useEffect(() => {
     getLikedSongs()
@@ -21,6 +21,7 @@ export default function LikedSongs() {
     <SafeAreaView>
       {loading && <ActivityIndicator size="large" />}
       {error !== "" && <Text>{error}</Text>}
+      {contextError !== "" && <Text>{contextError}</Text>}
       {!loading && songs.length === 0 && <Text>مفيش أغاني في المفضلة</Text>}
       <FlatList
         data={songs}

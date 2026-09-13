@@ -4,11 +4,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 type LikedSongsContextType = {
   likedIds: number[];
   toggleLike: (id: number) => void;
+  error: string;
 };
 
 const LikedSongsContext = createContext<LikedSongsContextType>({
   likedIds: [],
   toggleLike: () => {},
+  error: "",
 });
 
 export function LikedSongsProvider({
@@ -17,14 +19,16 @@ export function LikedSongsProvider({
   children: React.ReactNode;
 }) {
   const [likedIds, setLikedIds] = useState<number[]>([]);
-
+const [error, setError] = useState("");
   useEffect(() => {
     getLikedSongs()
       .then((data) => {
-        console.log("PROVIDER DATA:", data);
         setLikedIds(data.map((s: any) => s.id));
       })
-      .catch((e) => console.log("PROVIDER ERROR:", e));
+      .catch((e) => {
+        console.log("PROVIDER ERROR:", e);
+        setError("فشل تحميل الأغاني");
+      });
   }, []);
 
   const toggleLike = (id: number) => {
@@ -37,7 +41,7 @@ export function LikedSongsProvider({
   };
 
   return (
-    <LikedSongsContext.Provider value={{ likedIds, toggleLike }}>
+    <LikedSongsContext.Provider value={{ likedIds, toggleLike, error }}>
       {children}
     </LikedSongsContext.Provider>
   );
