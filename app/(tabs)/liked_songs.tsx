@@ -1,5 +1,6 @@
 import SongListItem from "@/components/play_lists/song_list_item";
 import { Colors } from "@/constants/colors";
+import { Typography } from "@/constants/Typography";
 import { useLikedSongs } from "@/context/liked_songs_context";
 import { getLikedSongs } from "@/services/liked_service";
 import { useFocusEffect } from "expo-router";
@@ -27,6 +28,11 @@ export default function LikedSongs() {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+      <Text
+        style={{ ...Typography.header, color: Colors.textPrimary, padding: 16 }}
+      >
+        Liked Songs
+      </Text>
       {loading && <ActivityIndicator size="large" />}
       {error !== "" && <Text>{error}</Text>}
       {contextError !== "" && <Text>{contextError}</Text>}

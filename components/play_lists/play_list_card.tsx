@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/colors";
-import { Ionicons } from "@expo/vector-icons";
 import { Typography } from "@/constants/Typography";
+import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 type PlaylistCardProps = {
   playlist: {
@@ -8,12 +8,14 @@ type PlaylistCardProps = {
     name: string;
     track_count: number;
   };
+  cardWidth?: number | string;
   onPress: () => void;
   onDelete: () => void;
   onRename: () => void;
 };
 export default function PlaylistCard({
   playlist,
+  cardWidth,
   onPress,
   onDelete,
   onRename,
@@ -21,44 +23,50 @@ export default function PlaylistCard({
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
-      }}
+      style={{ width: cardWidth as any, marginBottom: 20 }}
     >
       <View
         style={{
-          width: 56,
-          height: 56,
-          borderRadius: 8,
+          width: "100%",
+          aspectRatio: 1,
+          borderRadius: 12,
           backgroundColor: Colors.accentLight,
           alignItems: "center",
           justifyContent: "center",
-          marginRight: 12,
         }}
       >
-        <Ionicons name="musical-notes" size={26} color={Colors.accent} />
+        <Ionicons name="musical-notes" size={64} color={Colors.accent} />
       </View>
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{ fontWeight: "600", fontSize: 16, color: Colors.textPrimary }}
-        >
-          {playlist.name}
-        </Text>
-        <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
-          {playlist.track_count} tracks
-        </Text>
+
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{ ...Typography.bodyBold, color: Colors.textPrimary }}
+            numberOfLines={1}
+          >
+            {playlist.name}
+          </Text>
+          <Text style={{ ...Typography.caption, color: Colors.textSecondary }}>
+            {playlist.track_count} tracks
+          </Text>
+        </View>
+        <TouchableOpacity onPress={onRename} style={{ padding: 4 }}>
+          <Ionicons
+            name="pencil-outline"
+            size={18}
+            color={Colors.textSecondary}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onDelete} style={{ padding: 4 }}>
+          <Ionicons
+            name="trash-outline"
+            size={18}
+            color={Colors.textSecondary}
+          />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={onRename} style={{ padding: 8 }}>
-        <Ionicons name="pencil-outline" size={20} color={Colors.textSecondary} />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onDelete} style={{ padding: 8 }}>
-        <Ionicons name="trash-outline" size={20} color={Colors.textSecondary} />
-      </TouchableOpacity>
     </TouchableOpacity>
   );
 }

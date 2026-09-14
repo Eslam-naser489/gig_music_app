@@ -15,8 +15,7 @@ import {
   Modal,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
+  TouchableOpacity, useWindowDimensions, View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function PlayList() {
@@ -28,6 +27,9 @@ export default function PlayList() {
   const [renameId, setRenameId] = useState<number | null>(null);
   const [renameName, setRenameName] = useState("");
   const router = useRouter();
+  const { width } = useWindowDimensions();
+  const numColumns = width > 900 ? 4 : width > 600 ? 3 : 2;
+  const cardWidth = numColumns === 2 ? "48%" : numColumns === 3 ? "31%" : "23%";
   const handleDelete = (id: number) => {
     setPlaylists(playlists.filter((p) => p.id !== id));
 
@@ -61,6 +63,11 @@ export default function PlayList() {
   );
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+      <Text
+        style={{ ...Typography.header, color: Colors.textPrimary, padding: 16 }}
+      >
+        Playlists
+      </Text>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
         style={{ padding: 16, alignItems: "flex-end" }}
@@ -73,7 +80,13 @@ export default function PlayList() {
       {error !== "" && <Text>{error}</Text>}
       {!loading && playlists.length === 0 && <Text>مفيش قوائم تشغيل</Text>}
       <FlatList
+        numColumns={numColumns}
+        key={numColumns}
         data={playlists}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+        }}
         renderItem={({ item }) => (
           <PlaylistCard
             playlist={item}
@@ -97,9 +110,19 @@ export default function PlayList() {
           }}
         >
           <View
-            style={{ backgroundColor: Colors.surface, padding: 20, borderRadius: 12 }}
+            style={{
+              backgroundColor: Colors.surface,
+              padding: 20,
+              borderRadius: 12,
+            }}
           >
-            <Text style={{ ...Typography.title, color: Colors.textPrimary, marginBottom: 12 }}>
+            <Text
+              style={{
+                ...Typography.title,
+                color: Colors.textPrimary,
+                marginBottom: 12,
+              }}
+            >
               قائمة تشغيل جديدة
             </Text>
             <TextInput
@@ -140,9 +163,19 @@ export default function PlayList() {
           }}
         >
           <View
-            style={{ backgroundColor: Colors.surface, padding: 20, borderRadius: 12 }}
+            style={{
+              backgroundColor: Colors.surface,
+              padding: 20,
+              borderRadius: 12,
+            }}
           >
-            <Text style={{ ...Typography.title, color: Colors.textPrimary, marginBottom: 12 }}>
+            <Text
+              style={{
+                ...Typography.title,
+                color: Colors.textPrimary,
+                marginBottom: 12,
+              }}
+            >
               إعادة تسمية
             </Text>
             <TextInput
