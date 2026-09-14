@@ -6,13 +6,13 @@ import {
   removeTrackFromPlaylist,
 } from "@/services/play_list_service";
 import { useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { Colors } from "@/constants/colors";
 import {
   ActivityIndicator,
   FlatList,
   Modal,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -56,7 +56,7 @@ export default function PlaylistDetail() {
       .catch(() => setError("فشل إضافة الأغنية"));
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       {loading && <ActivityIndicator size="large" />}
       {error !== "" && <Text>{error}</Text>}
       {playlist && playlist.tracks.length === 0 && <Text>القائمة فاضية</Text>}
@@ -66,7 +66,7 @@ export default function PlaylistDetail() {
             onPress={openAdd}
             style={{ paddingHorizontal: 16, paddingBottom: 12 }}
           >
-            <Text style={{ color: "#FF5A3C", fontSize: 16, fontWeight: "600" }}>
+            <Text style={{ color: Colors.accent, fontSize: 16, fontWeight: "600" }}>
               + إضافة أغنية
             </Text>
           </TouchableOpacity>

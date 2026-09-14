@@ -1,8 +1,11 @@
 import SongListItem from "@/components/play_lists/song_list_item";
+import { Colors } from "@/constants/colors";
 import { useLikedSongs } from "@/context/liked_songs_context";
 import { getLikedSongs } from "@/services/liked_service";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, SafeAreaView, Text } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LikedSongs() {
   const [songs, setSongs] = useState<any[]>([]);
@@ -10,18 +13,20 @@ export default function LikedSongs() {
   const [error, setError] = useState("");
   const { likedIds, toggleLike, error: contextError } = useLikedSongs();
 
-  useEffect(() => {
-    getLikedSongs()
-      .then((data) => setSongs(data))
-      .catch(() => setError("فشل تحميل الأغاني"))
-      .finally(() => setLoading(false));
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getLikedSongs()
+        .then((data) => setSongs(data))
+        .catch(() => setError("فشل تحميل الأغاني"))
+        .finally(() => setLoading(false));
+    }, []),
+  );
   const handleLikePress = (id: number) => {
     toggleLike(id);
     setSongs(songs.filter((s) => s.id !== id));
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       {loading && <ActivityIndicator size="large" />}
       {error !== "" && <Text>{error}</Text>}
       {contextError !== "" && <Text>{contextError}</Text>}
