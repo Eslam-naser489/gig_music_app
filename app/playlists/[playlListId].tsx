@@ -1,4 +1,6 @@
 import SongListItem from "@/components/play_lists/song_list_item";
+import { Colors } from "@/constants/colors";
+import { Typography } from "@/constants/Typography";
 import {
   addTrackToPlaylist,
   getAllTracks,
@@ -6,9 +8,7 @@ import {
   removeTrackFromPlaylist,
 } from "@/services/play_list_service";
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
-import { Colors } from "@/constants/colors";
 import {
   ActivityIndicator,
   FlatList,
@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function PlaylistDetail() {
   const { playlListId } = useLocalSearchParams();
   const [playlist, setPlaylist] = useState<any>(null);
@@ -66,11 +67,17 @@ export default function PlaylistDetail() {
             onPress={openAdd}
             style={{ paddingHorizontal: 16, paddingBottom: 12 }}
           >
-            <Text style={{ color: Colors.accent, fontSize: 16, fontWeight: "600" }}>
+            <Text style={{ ...Typography.button, color: Colors.accent }}>
               + إضافة أغنية
             </Text>
           </TouchableOpacity>
-          <Text style={{ fontSize: 24, fontWeight: "700", padding: 16 }}>
+          <Text
+            style={{
+              ...Typography.header,
+              color: Colors.textPrimary,
+              padding: 16,
+            }}
+          >
             {playlist.name}
           </Text>
           <FlatList
@@ -91,18 +98,24 @@ export default function PlaylistDetail() {
                 flex: 1,
                 justifyContent: "center",
                 padding: 24,
-                backgroundColor: "rgba(0,0,0,0.4)",
+                backgroundColor: Colors.overlay,
               }}
             >
               <View
                 style={{
-                  backgroundColor: "white",
+                  backgroundColor: Colors.surface,
                   borderRadius: 12,
                   maxHeight: "70%",
                   paddingVertical: 12,
                 }}
               >
-                <Text style={{ fontSize: 18, fontWeight: "600", padding: 16 }}>
+                <Text
+                  style={{
+                    ...Typography.title,
+                    color: Colors.textPrimary,
+                    padding: 16,
+                  }}
+                >
                   اختر أغنية
                 </Text>
                 <FlatList
@@ -113,11 +126,23 @@ export default function PlaylistDetail() {
                       style={{
                         padding: 14,
                         borderBottomWidth: 1,
-                        borderBottomColor: "#eee",
+                        borderBottomColor: Colors.border,
                       }}
                     >
-                      <Text style={{ fontWeight: "600" }}>{item.title}</Text>
-                      <Text style={{ color: "gray", fontSize: 13 }}>
+                      <Text
+                        style={{
+                          ...Typography.bodyBold,
+                          color: Colors.textPrimary,
+                        }}
+                      >
+                        {item.title}
+                      </Text>
+                      <Text
+                        style={{
+                          ...Typography.caption,
+                          color: Colors.textSecondary,
+                        }}
+                      >
                         {item.artist}
                       </Text>
                     </TouchableOpacity>

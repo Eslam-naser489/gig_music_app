@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { Typography } from "@/constants/Typography";
 import { Text, TouchableOpacity, View } from "react-native";
 type PlaylistCardProps = {
   playlist: {

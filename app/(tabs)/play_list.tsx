@@ -1,5 +1,6 @@
 import PlaylistCard from "@/components/play_lists/play_list_card";
 import { Colors } from "@/constants/colors";
+import { Typography } from "@/constants/Typography";
 import {
   createPlaylist,
   deletePlaylist,
@@ -64,7 +65,7 @@ export default function PlayList() {
         onPress={() => setModalVisible(true)}
         style={{ padding: 16, alignItems: "flex-end" }}
       >
-        <Text style={{ color: Colors.accent, fontSize: 16, fontWeight: "600" }}>
+        <Text style={{ ...Typography.button, color: Colors.accent }}>
           + قائمة جديدة
         </Text>
       </TouchableOpacity>
@@ -92,13 +93,13 @@ export default function PlayList() {
             flex: 1,
             justifyContent: "center",
             padding: 24,
-            backgroundColor: "rgba(0,0,0,0.4)",
+            backgroundColor: Colors.overlay,
           }}
         >
           <View
-            style={{ backgroundColor: "white", padding: 20, borderRadius: 12 }}
+            style={{ backgroundColor: Colors.surface, padding: 20, borderRadius: 12 }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 12 }}>
+            <Text style={{ ...Typography.title, color: Colors.textPrimary, marginBottom: 12 }}>
               قائمة تشغيل جديدة
             </Text>
             <TextInput
@@ -107,7 +108,7 @@ export default function PlayList() {
               placeholder="الاسم"
               style={{
                 borderWidth: 1,
-                borderColor: "#ddd",
+                borderColor: Colors.border,
                 borderRadius: 8,
                 padding: 10,
                 marginBottom: 16,
@@ -121,7 +122,7 @@ export default function PlayList() {
                 <Text>إلغاء</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCreate} style={{ padding: 10 }}>
-                <Text style={{ color: Colors.accent, fontWeight: "600" }}>
+                <Text style={{ ...Typography.button, color: Colors.accent }}>
                   إنشاء
                 </Text>
               </TouchableOpacity>
@@ -135,13 +136,13 @@ export default function PlayList() {
             flex: 1,
             justifyContent: "center",
             padding: 24,
-            backgroundColor: "rgba(0,0,0,0.4)",
+            backgroundColor: Colors.overlay,
           }}
         >
           <View
-            style={{ backgroundColor: "white", padding: 20, borderRadius: 12 }}
+            style={{ backgroundColor: Colors.surface, padding: 20, borderRadius: 12 }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 12 }}>
+            <Text style={{ ...Typography.title, color: Colors.textPrimary, marginBottom: 12 }}>
               إعادة تسمية
             </Text>
             <TextInput
@@ -149,7 +150,7 @@ export default function PlayList() {
               onChangeText={setRenameName}
               style={{
                 borderWidth: 1,
-                borderColor: "#ddd",
+                borderColor: Colors.border,
                 borderRadius: 8,
                 padding: 10,
                 marginBottom: 16,
@@ -163,7 +164,7 @@ export default function PlayList() {
                 <Text>إلغاء</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleRename} style={{ padding: 10 }}>
-                <Text style={{ color: Colors.accent, fontWeight: "600" }}>
+                <Text style={{ ...Typography.button, color: Colors.accent }}>
                   حفظ
                 </Text>
               </TouchableOpacity>

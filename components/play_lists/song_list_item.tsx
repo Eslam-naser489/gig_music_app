@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/colors";
+import { Typography } from "@/constants/Typography";
 import { formatTime } from "@/utils/format_time";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -29,16 +30,14 @@ export default function SongListItem({
         style={{ width: 56, height: 56, borderRadius: 8 }}
       />
       <View style={{ marginLeft: 12, flex: 1 }}>
-        <Text
-          style={{ fontWeight: "600", fontSize: 15, color: Colors.textPrimary }}
-        >
+        <Text style={{ ...Typography.bodyBold, color: Colors.textPrimary }}>
           {song.title}
         </Text>
-        <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
+        <Text style={{ ...Typography.caption, color: Colors.textSecondary }}>
           {song.artist}
         </Text>
       </View>
-      <Text style={{ color: Colors.textSecondary, fontSize: 13 }}>
+      <Text style={{ ...Typography.caption, color: Colors.textSecondary }}>
         {formatTime(song.duration)}
       </Text>
       <TouchableOpacity onPress={onLikePress}>
