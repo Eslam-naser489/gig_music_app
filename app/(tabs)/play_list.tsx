@@ -15,7 +15,9 @@ import {
   Modal,
   Text,
   TextInput,
-  TouchableOpacity, useWindowDimensions, View
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function PlayList() {
@@ -76,9 +78,21 @@ export default function PlayList() {
           + قائمة جديدة
         </Text>
       </TouchableOpacity>
-      {loading && <ActivityIndicator size="large" />}
-      {error !== "" && <Text>{error}</Text>}
-      {!loading && playlists.length === 0 && <Text>مفيش قوائم تشغيل</Text>}
+      {loading && <ActivityIndicator size="large" color={Colors.accent} />}
+      {error !== "" && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.error }}>
+            {error}
+          </Text>
+        </View>
+      )}
+      {!loading && playlists.length === 0 && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.textSecondary }}>
+            مفيش قوائم تشغيل
+          </Text>
+        </View>
+      )}
       <FlatList
         numColumns={numColumns}
         key={numColumns}
@@ -90,6 +104,7 @@ export default function PlayList() {
         renderItem={({ item }) => (
           <PlaylistCard
             playlist={item}
+            cardWidth={cardWidth}
             onPress={() => router.push(`/playlists/${item.id}`)}
             onDelete={() => handleDelete(item.id)}
             onRename={() => {
@@ -142,7 +157,11 @@ export default function PlayList() {
                 onPress={() => setModalVisible(false)}
                 style={{ padding: 10 }}
               >
-                <Text>إلغاء</Text>
+                <Text
+                  style={{ ...Typography.body, color: Colors.textSecondary }}
+                >
+                  إلغاء
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCreate} style={{ padding: 10 }}>
                 <Text style={{ ...Typography.button, color: Colors.accent }}>
@@ -194,7 +213,11 @@ export default function PlayList() {
                 onPress={() => setRenameId(null)}
                 style={{ padding: 10 }}
               >
-                <Text>إلغاء</Text>
+                <Text
+                  style={{ ...Typography.body, color: Colors.textSecondary }}
+                >
+                  إلغاء
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleRename} style={{ padding: 10 }}>
                 <Text style={{ ...Typography.button, color: Colors.accent }}>

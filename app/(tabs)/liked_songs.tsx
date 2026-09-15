@@ -5,7 +5,7 @@ import { useLikedSongs } from "@/context/liked_songs_context";
 import { getLikedSongs } from "@/services/liked_service";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, Text } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LikedSongs() {
@@ -33,10 +33,28 @@ export default function LikedSongs() {
       >
         Liked Songs
       </Text>
-      {loading && <ActivityIndicator size="large" />}
-      {error !== "" && <Text>{error}</Text>}
-      {contextError !== "" && <Text>{contextError}</Text>}
-      {!loading && songs.length === 0 && <Text>مفيش أغاني في المفضلة</Text>}
+      {loading && <ActivityIndicator size="large" color={Colors.accent} />}
+      {error !== "" && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.error }}>
+            {error}
+          </Text>
+        </View>
+      )}
+      {contextError !== "" && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.error }}>
+            {contextError}
+          </Text>
+        </View>
+      )}
+      {!loading && songs.length === 0 && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.textSecondary }}>
+            مفيش أغاني في المفضلة
+          </Text>
+        </View>
+      )}
       <FlatList
         data={songs}
         renderItem={({ item }) => (

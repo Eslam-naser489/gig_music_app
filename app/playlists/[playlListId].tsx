@@ -7,7 +7,8 @@ import {
   getPlaylistById,
   removeTrackFromPlaylist,
 } from "@/services/play_list_service";
-import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,6 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 export default function PlaylistDetail() {
   const { playlListId } = useLocalSearchParams();
   const [playlist, setPlaylist] = useState<any>(null);
@@ -25,6 +27,8 @@ export default function PlaylistDetail() {
   const [error, setError] = useState("");
   const [addVisible, setAddVisible] = useState(false);
   const [allTracks, setAllTracks] = useState<any[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     getPlaylistById(playlListId as string)
       .then((data) => setPlaylist(data))
@@ -58,28 +62,62 @@ export default function PlaylistDetail() {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      {loading && <ActivityIndicator size="large" />}
-      {error !== "" && <Text>{error}</Text>}
-      {playlist && playlist.tracks.length === 0 && <Text>القائمة فاضية</Text>}
+      {loading && <ActivityIndicator size="large" color={Colors.accent} />}
+      {error !== "" && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.error }}>
+            {error}
+          </Text>
+        </View>
+      )}
+      {playlist && playlist.tracks.length === 0 && (
+        <View style={{ padding: 32, alignItems: "center" }}>
+          <Text style={{ ...Typography.body, color: Colors.textSecondary }}>
+            القائمة فاضية
+          </Text>
+        </View>
+      )}
       {playlist && (
         <>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingTop: 8,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{ padding: 4 }}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={Colors.textPrimary}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                ...Typography.header,
+                color: Colors.textPrimary,
+                marginLeft: 12,
+                flex: 1,
+              }}
+            >
+              {playlist.name}
+            </Text>
+          </View>
+
           <TouchableOpacity
             onPress={openAdd}
-            style={{ paddingHorizontal: 16, paddingBottom: 12 }}
+            style={{ paddingHorizontal: 16, paddingVertical: 12 }}
           >
             <Text style={{ ...Typography.button, color: Colors.accent }}>
               + إضافة أغنية
             </Text>
           </TouchableOpacity>
-          <Text
-            style={{
-              ...Typography.header,
-              color: Colors.textPrimary,
-              padding: 16,
-            }}
-          >
-            {playlist.name}
-          </Text>
+
           <FlatList
             data={playlist.tracks}
             renderItem={({ item }) => (
@@ -153,7 +191,11 @@ export default function PlaylistDetail() {
                   onPress={() => setAddVisible(false)}
                   style={{ padding: 14, alignItems: "center" }}
                 >
-                  <Text>إلغاء</Text>
+                  <Text
+                    style={{ ...Typography.body, color: Colors.textSecondary }}
+                  >
+                    إلغاء
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
