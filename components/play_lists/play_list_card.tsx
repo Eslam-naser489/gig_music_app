@@ -52,14 +52,26 @@ export default function PlaylistCard({
             {playlist.track_count} tracks
           </Text>
         </View>
-        <TouchableOpacity onPress={onRename} style={{ padding: 4 }}>
+        <TouchableOpacity
+          onPress={(e) => {
+            e.stopPropagation();
+            onRename();
+          }}
+          style={{ padding: 4 }}
+        >
           <Ionicons
             name="pencil-outline"
             size={18}
             color={Colors.textSecondary}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onDelete} style={{ padding: 4 }}>
+        <TouchableOpacity
+          onPress={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          style={{ padding: 4, marginLeft: 12 }}
+        >
           <Ionicons
             name="trash-outline"
             size={18}

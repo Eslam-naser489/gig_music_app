@@ -30,8 +30,20 @@ export default function PlayList() {
   const [renameName, setRenameName] = useState("");
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const numColumns = width > 900 ? 4 : width > 600 ? 3 : 2;
-  const cardWidth = numColumns === 2 ? "48%" : numColumns === 3 ? "31%" : "23%";
+
+  const H_PADDING = 16;
+  const GAP = 16;
+  const MIN_CARD_WIDTH = 140;
+  const MAX_CARD_WIDTH = 200;
+
+  const availableWidth = width - H_PADDING * 2;
+  const numColumns = Math.max(
+    2,
+    Math.floor((availableWidth + GAP) / (MIN_CARD_WIDTH + GAP)),
+  );
+  const rawCardWidth = (availableWidth - GAP * (numColumns - 1)) / numColumns;
+  const cardWidth = Math.min(rawCardWidth, MAX_CARD_WIDTH);
+
   const handleDelete = (id: number) => {
     setPlaylists(playlists.filter((p) => p.id !== id));
 
@@ -72,7 +84,7 @@ export default function PlayList() {
       </Text>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
-        style={{ padding: 16, alignItems: "flex-end" }}
+        style={{ padding: 16, alignSelf: "flex-end" }}
       >
         <Text style={{ ...Typography.button, color: Colors.accent }}>
           + قائمة جديدة
@@ -97,10 +109,8 @@ export default function PlayList() {
         numColumns={numColumns}
         key={numColumns}
         data={playlists}
-        columnWrapperStyle={{
-          justifyContent: "space-between",
-          paddingHorizontal: 16,
-        }}
+        columnWrapperStyle={{ gap: GAP, paddingHorizontal: H_PADDING }}
+        contentContainerStyle={{ gap: GAP, paddingBottom: GAP }}
         renderItem={({ item }) => (
           <PlaylistCard
             playlist={item}
