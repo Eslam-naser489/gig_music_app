@@ -12,7 +12,7 @@ interface AuthButtonProps {
   isLoading?: boolean;
 }
 
-export const AuthButton = ({ title, onPress, isLoading }: AuthButtonProps) => {
+export const AuthButton = ({ title, onPress, isLoading}: AuthButtonProps) => {
   return (
     <TouchableOpacity
       style={styles.button}
