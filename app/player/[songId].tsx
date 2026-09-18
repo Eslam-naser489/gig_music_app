@@ -1,54 +1,123 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+// app/player/[songId].tsx
+import PlayerControls from "@/components/player/player_controls";
+import ProgressBar from "@/components/player/progress_bar";
+import { usePlayer } from "@/hooks/use_player";
+import { getRecommendedSongs } from "@/services/music_service";
 import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Image,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Header } from "@/components/layout/header";
-import { Colors } from "@/constants/colors";
-import { Typography } from "@/constants/Typography";
-import { Theme } from "@/constants/theme";
-
-/**
- * Now Playing screen — placeholder shell so this route has a valid
- * default export (an empty file here crashes the whole app's
- * navigator on boot, including every "tap a song" flow from Home).
- * Full playback controls are a separate member's scope; swap the body
- * out once that's built — the Header/back-button wiring can stay.
- */
-export default function PlayerScreen() {
+export default function NowPlayingScreen() {
   const { songId } = useLocalSearchParams<{ songId: string }>();
-  const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { currentSong, position, duration, error, playSong, seekTo } =
+    usePlayer();
+
+  const [loading, setLoading] = useState(currentSong?.id !== songId);
+  const [notFound, setNotFound] = useState(false);
+
+  // Start the song from the URL only when the screen opens
+  useEffect(() => {
+    if (!songId || currentSong?.id === songId) return;
+    let active = true;
+    getRecommendedSongs()
+      .then((songs) => {
+        if (!active) return;
+        const song = songs.find((s) => s.id === songId);
+        if (song) playSong(song, songs);
+        else setNotFound(true);
+      })
+      .catch(() => active && setNotFound(true))
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [songId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#FF5A3C" />
+      </View>
+    );
+  }
+
+  if (notFound || !currentSong) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.message}>Song not found</Text>
+        <Pressable onPress={() => router.back()}>
+          <Text style={styles.link}>Go back</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.screen}>
-      <Header title="Playing Now" showBack />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={10}>
+          <Ionicons name="chevron-down" size={28} color="#171827" />
+        </Pressable>
+        <Text style={styles.headerTitle}>Now Playing</Text>
+        <View style={{ width: 28 }} />
+      </View>
 
-      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Theme.spacing.xxl }]}>
-        <View style={styles.artwork}>
-          <Ionicons name="musical-notes" size={64} color={Colors.accent} />
-        </View>
+      <Image source={{ uri: currentSong.coverUrl }} style={styles.cover} />
 
-        <Text style={[Typography.title, styles.title]}>Player controls coming soon</Text>
-        <Text style={[Typography.body, styles.subtitle]}>
-          Track #{songId} will play here once the Player module ships.
-        </Text>
-      </ScrollView>
-    </View>
+      <Text style={styles.title} numberOfLines={1}>
+        {currentSong.title}
+      </Text>
+      <Text style={styles.artist} numberOfLines={1}>
+        {currentSong.artist}
+      </Text>
+
+      {error && <Text style={styles.error}>{error}</Text>}
+
+      <View style={styles.progress}>
+        <ProgressBar position={position} duration={duration} onSeek={seekTo} />
+      </View>
+
+      <PlayerControls />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: Colors.background },
-  content: { alignItems: "center", paddingHorizontal: Theme.spacing.xxl, paddingTop: Theme.spacing.xxxl },
-  artwork: {
+  container: { flex: 1, backgroundColor: "#FAF9FC", paddingHorizontal: 24 },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FAF9FC",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  headerTitle: { fontSize: 16, fontWeight: "600", color: "#171827" },
+  cover: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: Theme.borderRadius.xl,
-    backgroundColor: Colors.accentLight,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Theme.spacing.xxl,
+    borderRadius: 20,
+    marginTop: 16,
+    backgroundColor: "#FBE9E4",
   },
-  title: { color: Colors.textPrimary, textAlign: "center" },
-  subtitle: { color: Colors.textSecondary, textAlign: "center", marginTop: Theme.spacing.sm },
+  title: { fontSize: 24, fontWeight: "700", color: "#171827", marginTop: 28 },
+  artist: { fontSize: 16, color: "#888", marginTop: 4 },
+  error: { color: "#E8412D", marginTop: 8, fontSize: 13 },
+  progress: { marginTop: 28, marginBottom: 20 },
+  message: { fontSize: 16, color: "#171827", marginBottom: 12 },
+  link: { color: "#FF5A3C", fontSize: 16, fontWeight: "600" },
 });

@@ -18,6 +18,7 @@
     "@react-navigation/native": "^7.1.8",
     "@shopify/flash-list": "2.0.2",
     "expo": "^57.0.20",
+    "expo-audio": "~57.0.5",
     "expo-constants": "~57.0.17",
     "expo-font": "~57.0.3",
     "expo-haptics": "~57.0.2",
