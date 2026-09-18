@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { CustomButton } from '../../components/CustomButton';
-import { InputField } from '../../components/InputField';
-import { Colors } from '../../constants/colors';
-import { Typography } from '../../constants/Typography';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../context/AuthContext';
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CustomButton } from "../../components/CustomButton";
+import { InputField } from "../../components/InputField";
+import { Colors } from "../../constants/colors";
+import { Typography } from "../../constants/Typography";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { login } = useAuth();
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
-    
+
     setIsLoading(true);
     try {
       await login({ email, password });
-      router.replace('/(drawer)/(tabs)');
+      router.replace("/");
     } catch (error) {
-      Alert.alert('Login Failed', 'Invalid credentials or server error');
+      Alert.alert("Login Failed", "Invalid credentials or server error");
     } finally {
       setIsLoading(false);
     }
@@ -35,8 +42,8 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <View style={styles.header}>
@@ -70,10 +77,10 @@ export default function LoginScreen() {
             style={{ marginBottom: 16 }}
           />
           <Text style={styles.switchText}>
-            Don't have an account?{' '}
-            <Text 
+            Don't have an account?{" "}
+            <Text
               style={styles.switchLink}
-              onPress={() => router.push('/(auth)/signup')}
+              onPress={() => router.push("/(auth)/signup")}
             >
               Sign Up
             </Text>
@@ -99,7 +106,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.header,
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontSize: 32,
     marginBottom: 8,
   },
@@ -116,10 +123,10 @@ const styles = StyleSheet.create({
   switchText: {
     ...Typography.body,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   switchLink: {
-    color: Colors.primary,
-    fontWeight: 'bold',
-  }
+    color: Colors.accent,
+    fontWeight: "bold",
+  },
 });

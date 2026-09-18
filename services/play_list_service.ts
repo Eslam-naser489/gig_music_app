@@ -1,104 +1,48 @@
-import { ApiConfig, TOKEN } from "@/constants/api";
+import { apiClient } from './apiClient';
 
 export async function getPlaylistById(id: string) {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${id}/`, {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch playlist");
-  }
-
-  return response.json();
+  const { data } = await apiClient.get(`/playlists/${id}/`);
+  return data;
 }
+
 export async function getPlaylists() {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/`, {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch playlists");
-  }
-
-  return response.json();
+  const { data } = await apiClient.get('/playlists/');
+  return data;
 }
+
 export async function createPlaylist(name: string) {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create playlist");
-  }
-
-  return response.json();
+  const { data } = await apiClient.post('/playlists/', { name });
+  return data;
 }
+
 export async function deletePlaylist(id: number) {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${id}/`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${TOKEN}` },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete playlist");
-  }
+  await apiClient.delete(`/playlists/${id}/`);
 }
+
 export async function removeTrackFromPlaylist(
   playlistId: string,
   trackId: number,
 ) {
-  const response = await fetch(
-    `${ApiConfig.baseUrl}/playlists/${playlistId}/remove_track/`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ track_id: trackId }),
-    },
+  const { data } = await apiClient.delete(
+    `/playlists/${playlistId}/remove_track/`,
+    { track_id: trackId },
   );
-
-  if (!response.ok) {
-    throw new Error("Failed to remove track");
-  }
-
-  return response.json();
+  return data;
 }
+
 export async function renamePlaylist(id: number, name: string) {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${id}/`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name }),
-  });
-  if (!response.ok) throw new Error("Failed to rename playlist");
-  return response.json();
+  const { data } = await apiClient.patch(`/playlists/${id}/`, { name });
+  return data;
 }
+
 export async function addTrackToPlaylist(playlistId: string, trackId: number) {
-  const response = await fetch(`${ApiConfig.baseUrl}/playlists/${playlistId}/add_track/`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ track_id: trackId }),
+  const { data } = await apiClient.post(`/playlists/${playlistId}/add_track/`, {
+    track_id: trackId,
   });
-  if (!response.ok) throw new Error("Failed to add track");
-  return response.json();
+  return data;
 }
 
 export async function getAllTracks() {
-  const response = await fetch(`${ApiConfig.baseUrl}/tracks/?limit=30`, {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-  });
-  if (!response.ok) throw new Error("Failed to fetch tracks");
-  return response.json();
+  const { data } = await apiClient.get('/tracks/?limit=30');
+  return data;
 }

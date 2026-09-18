@@ -1,7 +1,9 @@
 import SongListItem from "@/components/play_lists/song_list_item";
+import { IconButton } from "@/components/ui/icon_button";
 import { Colors } from "@/constants/colors";
 import { Typography } from "@/constants/Typography";
 import { useLikedSongs } from "@/context/liked_songs_context";
+import { useSideMenu } from "@/context/side_menu_context";
 import { getLikedSongs } from "@/services/liked_service";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -13,6 +15,7 @@ export default function LikedSongs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { likedIds, toggleLike, error: contextError } = useLikedSongs();
+  const sideMenu = useSideMenu();
 
   useFocusEffect(
     useCallback(() => {
@@ -28,11 +31,18 @@ export default function LikedSongs() {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <Text
-        style={{ ...Typography.header, color: Colors.textPrimary, padding: 16 }}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
       >
-        Liked Songs
-      </Text>
+        <IconButton icon="menu" onPress={() => sideMenu.show()} accessibilityLabel="Open menu" />
+        <Text style={{ ...Typography.header, color: Colors.textPrimary }}>Liked Songs</Text>
+      </View>
       {loading && <ActivityIndicator size="large" color={Colors.accent} />}
       {error !== "" && (
         <View style={{ padding: 32, alignItems: "center" }}>

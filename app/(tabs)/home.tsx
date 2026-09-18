@@ -6,9 +6,12 @@ import { useRouter } from "expo-router";
 import { Song } from "../../types";
 import RecommendedSection from "@/components/home/recommended_section";
 import MyPlaylistSection from "@/components/home/my_play_list_section";
+import { IconButton } from "@/components/ui/icon_button";
+import { useSideMenu } from "@/context/side_menu_context";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const sideMenu = useSideMenu();
 
   const handleSongPress = (song: Song) => {
     router.push(`/player/${song.id}`);
@@ -18,6 +21,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea}>
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
+        <IconButton icon="menu" onPress={() => sideMenu.show()} accessibilityLabel="Open menu" />
         <Text style={styles.greeting}>Home</Text>
         </View>
 
@@ -30,6 +34,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#fff" },
-  header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4 },
+  header: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4 },
   greeting: { fontSize: 24, fontWeight: "700" },
 });

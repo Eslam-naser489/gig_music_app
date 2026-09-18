@@ -20,8 +20,8 @@ export default function OnboardingScreen() {
       <View style={styles.content}>
         {/* Image container with dark overlay effect */}
         <View style={styles.imageWrapper}>
-          <Image 
-            source={require('../../assets/images/spongebob_music.jpg')} 
+          <Image
+            source={require('../../assets/images/spongebob_music.jpg')}
             style={styles.image}
             resizeMode="cover"
           />
@@ -40,8 +40,8 @@ export default function OnboardingScreen() {
           title="Let's Start"
           onPress={() => router.push('/(auth)/login')}
           style={styles.startButton}
-          textStyle={{ color: Colors.white }}
-          rightIcon={<ArrowRight size={20} color={Colors.white} />}
+          textStyle={{ color: Colors.textInverse }}
+          rightIcon={<ArrowRight size={20} color={Colors.textInverse} />}
         />
       </View>
     </SafeAreaView>

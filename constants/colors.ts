@@ -33,4 +33,11 @@ export const Colors = {
   
   // Overlay
   overlay: 'rgba(26, 29, 46, 0.5)',
+
+  // Side Menu — always-dark drawer surface (per Figma), independent of
+  // the app's own light background.
+  menuSurface: '#171827',
+  menuSurfaceText: '#FFFFFF',
+  menuSurfaceTextSoft: 'rgba(255, 255, 255, 0.72)',
+  menuSurfaceBorder: 'rgba(255, 255, 255, 0.1)',
 };

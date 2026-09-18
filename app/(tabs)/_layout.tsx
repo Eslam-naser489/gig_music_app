@@ -1,10 +1,12 @@
 import { Colors } from "@/constants/colors";
+import { BottomNavigation } from "@/components/layout/bottom_navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
   return (
     <Tabs
+      tabBar={(props) => <BottomNavigation {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors.accent,

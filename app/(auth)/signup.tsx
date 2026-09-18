@@ -8,6 +8,12 @@ import { Typography } from '../../constants/Typography';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 
+const MIN_USERNAME_LENGTH = 3;
+
+// Only accepts a proper "name@gmail.com" address (nothing before the @ is
+// blank, and the domain is exactly gmail.com, not e.g. gmail.com.fake.com).
+const isValidGmailEmail = (value: string) => /^[^\s@]+@gmail\.com$/i.test(value.trim());
+
 export default function SignupScreen() {
   const router = useRouter();
   const { register, login } = useAuth();
@@ -23,7 +29,17 @@ export default function SignupScreen() {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
-    
+
+    if (username.trim().length < MIN_USERNAME_LENGTH) {
+      Alert.alert('Error', `Username must be at least ${MIN_USERNAME_LENGTH} characters long`);
+      return;
+    }
+
+    if (!isValidGmailEmail(email)) {
+      Alert.alert('Error', 'Email must be a valid Gmail address (e.g. name@gmail.com)');
+      return;
+    }
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
@@ -33,12 +49,12 @@ export default function SignupScreen() {
     try {
       // register() internally calls login() if the API doesn't return a token
       await register({ username, email, password });
-      router.replace('/(drawer)/(tabs)');
+      router.replace('/(tabs)/home');
     } catch (error: any) {
       // If register succeeded but didn't return token, try logging in manually
       try {
         await login({ email, password });
-        router.replace('/(drawer)/(tabs)');
+        router.replace('/(tabs)/home');
       } catch {
         Alert.alert('Signup Failed', error?.message || 'Could not create account. Please try to login manually.');
       }
@@ -129,7 +145,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.header,
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontSize: 32,
     marginBottom: 8,
   },
@@ -150,7 +166,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   switchLink: {
-    color: Colors.primary,
+    color: Colors.accent,
     fontWeight: 'bold',
   }
 });

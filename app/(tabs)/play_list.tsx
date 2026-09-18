@@ -1,6 +1,8 @@
 import PlaylistCard from "@/components/play_lists/play_list_card";
+import { IconButton } from "@/components/ui/icon_button";
 import { Colors } from "@/constants/colors";
 import { Typography } from "@/constants/Typography";
+import { useSideMenu } from "@/context/side_menu_context";
 import {
   createPlaylist,
   deletePlaylist,
@@ -30,6 +32,7 @@ export default function PlayList() {
   const [renameName, setRenameName] = useState("");
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const sideMenu = useSideMenu();
 
   const H_PADDING = 16;
   const GAP = 16;
@@ -77,11 +80,18 @@ export default function PlayList() {
   );
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <Text
-        style={{ ...Typography.header, color: Colors.textPrimary, padding: 16 }}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
       >
-        Playlists
-      </Text>
+        <IconButton icon="menu" onPress={() => sideMenu.show()} accessibilityLabel="Open menu" />
+        <Text style={{ ...Typography.header, color: Colors.textPrimary }}>Playlists</Text>
+      </View>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
         style={{ padding: 16, alignSelf: "flex-end" }}
