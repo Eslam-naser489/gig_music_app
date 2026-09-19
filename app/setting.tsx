@@ -22,7 +22,7 @@ type IconName = ComponentProps<typeof Ionicons>["name"];
  */
 export default function SettingsScreen() {
   const router = useRouter();
-  const { isDark, toggleDark } = useTheme();
+  const { isDark, toggleDark, colors } = useTheme();
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState(true);
   const [downloadOverWifi, setDownloadOverWifi] = useState(true);
@@ -33,21 +33,23 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.screen}>
-      <Header title="Settings" showBack />
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <Header title="Settings" showBack colors={colors} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {user ? (
-          <Card variant="outline" style={styles.profileCard}>
+          <Card variant="outline" style={styles.profileCard} colors={colors}>
             <View style={styles.profileRow}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{(user.username || user.email || "?").charAt(0).toUpperCase()}</Text>
+              <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
+                <Text style={[styles.avatarText, { color: colors.textInverse }]}>
+                  {(user.username || user.email || "?").charAt(0).toUpperCase()}
+                </Text>
               </View>
               <View style={styles.profileTextWrap}>
-                <Text style={[Typography.bodyBold, { color: Colors.textPrimary }]} numberOfLines={1}>
+                <Text style={[Typography.bodyBold, { color: colors.textPrimary }]} numberOfLines={1}>
                   {user.username || "Music lover"}
                 </Text>
-                <Text style={[Typography.caption, { color: Colors.textSecondary }]} numberOfLines={1}>
+                <Text style={[Typography.caption, { color: colors.textSecondary }]} numberOfLines={1}>
                   {user.email}
                 </Text>
               </View>
@@ -55,55 +57,58 @@ export default function SettingsScreen() {
           </Card>
         ) : null}
 
-        <SectionLabel label="Appearance" />
-        <Card variant="outline" style={styles.card}>
+        <SectionLabel label="Appearance" colors={colors} />
+        <Card variant="outline" style={styles.card} colors={colors}>
           <SettingRow
             icon={isDark ? "moon" : "moon-outline"}
             label="Dark Mode"
             description="Matches the switch in the side menu"
             value={isDark}
             onValueChange={toggleDark}
+            colors={colors}
           />
         </Card>
 
-        <SectionLabel label="Notifications" />
-        <Card variant="outline" style={styles.card}>
+        <SectionLabel label="Notifications" colors={colors} />
+        <Card variant="outline" style={styles.card} colors={colors}>
           <SettingRow
             icon="notifications-outline"
             label="Push Notifications"
             description="New releases and playlist updates"
             value={notifications}
             onValueChange={setNotifications}
+            colors={colors}
           />
-          <View style={styles.rowDivider} />
+          <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
           <SettingRow
             icon="cloud-download-outline"
             label="Download Over Wi-Fi Only"
             value={downloadOverWifi}
             onValueChange={setDownloadOverWifi}
+            colors={colors}
           />
         </Card>
 
-        <SectionLabel label="Support" />
-        <Card variant="outline" style={styles.card} onPress={() => router.push("/contact_us" as any)}>
-          <LinkRow icon="mail-outline" label="Contact Us" />
+        <SectionLabel label="Support" colors={colors} />
+        <Card variant="outline" style={styles.card} colors={colors} onPress={() => router.push("/contact_us" as any)}>
+          <LinkRow icon="mail-outline" label="Contact Us" colors={colors} />
         </Card>
-        <Card variant="outline" style={styles.card} onPress={() => router.push("/learn_more" as any)}>
-          <LinkRow icon="information-circle-outline" label="Learn More" />
+        <Card variant="outline" style={styles.card} colors={colors} onPress={() => router.push("/learn_more" as any)}>
+          <LinkRow icon="information-circle-outline" label="Learn More" colors={colors} />
         </Card>
 
         <View style={styles.signOutWrap}>
-          <Button label="Sign Out" variant="outline" icon="log-out-outline" fullWidth onPress={handleSignOut} />
+          <Button label="Sign Out" variant="outline" icon="log-out-outline" fullWidth onPress={handleSignOut} colors={colors} />
         </View>
 
-        <Text style={styles.version}>GIG Music Player · v1.0.0</Text>
+        <Text style={[styles.version, { color: colors.textTertiary }]}>GIG Music Player · v1.0.0</Text>
       </ScrollView>
     </View>
   );
 }
 
-function SectionLabel({ label }: { label: string }) {
-  return <Text style={styles.sectionLabel}>{label.toUpperCase()}</Text>;
+function SectionLabel({ label, colors }: { label: string; colors: typeof Colors }) {
+  return <Text style={[styles.sectionLabel, { color: colors.textTertiary }]}>{label.toUpperCase()}</Text>;
 }
 
 interface SettingRowProps {
@@ -112,42 +117,43 @@ interface SettingRowProps {
   description?: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
+  colors: typeof Colors;
 }
 
-function SettingRow({ icon, label, description, value, onValueChange }: SettingRowProps) {
+function SettingRow({ icon, label, description, value, onValueChange, colors }: SettingRowProps) {
   return (
     <View style={styles.settingRow}>
-      <View style={styles.settingIconTile}>
-        <Ionicons name={icon} size={18} color={Colors.accent} />
+      <View style={[styles.settingIconTile, { backgroundColor: colors.accentLight }]}>
+        <Ionicons name={icon} size={18} color={colors.accent} />
       </View>
       <View style={styles.settingTextWrap}>
-        <Text style={[Typography.bodyBold, { color: Colors.textPrimary }]}>{label}</Text>
-        {description ? <Text style={[Typography.caption, { color: Colors.textSecondary, marginTop: 2 }]}>{description}</Text> : null}
+        <Text style={[Typography.bodyBold, { color: colors.textPrimary }]}>{label}</Text>
+        {description ? <Text style={[Typography.caption, { color: colors.textSecondary, marginTop: 2 }]}>{description}</Text> : null}
       </View>
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: Colors.border, true: Colors.accent }}
+        trackColor={{ false: colors.border, true: colors.accent }}
         thumbColor="#FFFFFF"
       />
     </View>
   );
 }
 
-function LinkRow({ icon, label }: { icon: IconName; label: string }) {
+function LinkRow({ icon, label, colors }: { icon: IconName; label: string; colors: typeof Colors }) {
   return (
     <View style={styles.linkRow}>
-      <View style={styles.settingIconTile}>
-        <Ionicons name={icon} size={18} color={Colors.accent} />
+      <View style={[styles.settingIconTile, { backgroundColor: colors.accentLight }]}>
+        <Ionicons name={icon} size={18} color={colors.accent} />
       </View>
-      <Text style={[Typography.bodyBold, { color: Colors.textPrimary, flex: 1 }]}>{label}</Text>
-      <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
+      <Text style={[Typography.bodyBold, { color: colors.textPrimary, flex: 1 }]}>{label}</Text>
+      <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: Colors.background },
+  screen: { flex: 1 },
   content: { paddingHorizontal: Theme.spacing.lg, paddingBottom: 48 },
   profileCard: { marginBottom: Theme.spacing.md },
   profileRow: { flexDirection: "row", alignItems: "center", gap: Theme.spacing.md },
@@ -155,11 +161,10 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Theme.borderRadius.full,
-    backgroundColor: Colors.accent,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { color: Colors.textInverse, fontWeight: "800", fontSize: 18 },
+  avatarText: { fontWeight: "800", fontSize: 18 },
   profileTextWrap: { flex: 1 },
   sectionLabel: {
     marginTop: Theme.spacing.xl,
@@ -167,7 +172,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1.2,
-    color: Colors.textTertiary,
   },
   card: { padding: 0 },
   settingRow: {
@@ -184,16 +188,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.lg,
   },
-  rowDivider: { height: 1, backgroundColor: Colors.border, marginLeft: Theme.spacing.lg + 34 + Theme.spacing.md },
+  rowDivider: { height: 1, marginLeft: Theme.spacing.lg + 34 + Theme.spacing.md },
   settingIconTile: {
     width: 34,
     height: 34,
     borderRadius: Theme.borderRadius.sm,
-    backgroundColor: Colors.accentLight,
     alignItems: "center",
     justifyContent: "center",
   },
   settingTextWrap: { flex: 1 },
   signOutWrap: { marginTop: Theme.spacing.xxl },
-  version: { marginTop: Theme.spacing.xxl, textAlign: "center", fontSize: 12, color: Colors.textTertiary },
+  version: { marginTop: Theme.spacing.xxl, textAlign: "center", fontSize: 12 },
 });

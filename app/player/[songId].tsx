@@ -1,6 +1,7 @@
 // app/player/[songId].tsx
 import PlayerControls from "@/components/player/player_controls";
 import ProgressBar from "@/components/player/progress_bar";
+import { useLikedSongs } from "@/context/liked_songs_context";
 import { usePlayer } from "@/hooks/use_player";
 import { getRecommendedSongs } from "@/services/music_service";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +22,7 @@ export default function NowPlayingScreen() {
   const router = useRouter();
   const { currentSong, position, duration, error, playSong, seekTo } =
     usePlayer();
+  const { likedIds, toggleLike } = useLikedSongs();
 
   const [loading, setLoading] = useState(currentSong?.id !== songId);
   const [notFound, setNotFound] = useState(false);
@@ -62,6 +64,8 @@ export default function NowPlayingScreen() {
     );
   }
 
+  const isLiked = likedIds.includes(Number(currentSong.id));
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -90,7 +94,10 @@ export default function NowPlayingScreen() {
         <ProgressBar position={position} duration={duration} onSeek={seekTo} />
       </View>
 
-      <PlayerControls />
+      <PlayerControls
+        isLiked={isLiked}
+        onLikePress={() => toggleLike(Number(currentSong.id))}
+      />
     </SafeAreaView>
   );
 }

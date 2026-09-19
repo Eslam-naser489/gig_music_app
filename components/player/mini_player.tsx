@@ -16,6 +16,17 @@ const HIDDEN_ROUTES = [
   "/onboarding",
 ];
 
+// Screens that render the custom bottom tab bar (see app/(tabs)/_layout.tsx
+// + components/layout/bottom_navigation.tsx). The mini player is mounted
+// globally in the root layout and has no idea that bar exists, so on these
+// routes it needs extra bottom offset or it floats on top of/over the tabs.
+const TAB_BAR_ROUTES = ["/home", "/search", "/liked_songs", "/play_list"];
+
+// Rough rendered height of BottomNavigation, excluding the safe-area inset
+// (which is added separately below): paddingTop(8) + icon tile(32) +
+// gap(4) + label text(~14) + border(1) + its own extra paddingBottom(4).
+const TAB_BAR_HEIGHT = 63;
+
 export default function MiniPlayer() {
   const { currentSong, isPlaying, position, duration, togglePlay, next } =
     usePlayer();
@@ -28,11 +39,14 @@ export default function MiniPlayer() {
     pathname === "/";
   if (!currentSong || hidden) return null;
 
+  const onTabBarScreen = TAB_BAR_ROUTES.some((route) => pathname.startsWith(route));
+  const bottomOffset = insets.bottom + 8 + (onTabBarScreen ? TAB_BAR_HEIGHT : 0);
+
   const progress = duration > 0 ? Math.min(position / duration, 1) : 0;
 
   return (
     <Pressable
-      style={[styles.container, { bottom: insets.bottom + 8 }]}
+      style={[styles.container, { bottom: bottomOffset }]}
       onPress={() => router.push(`/player/${currentSong.id}`)}
       accessibilityLabel="Open now playing"
     >

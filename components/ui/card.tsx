@@ -3,6 +3,7 @@ import type { PropsWithChildren } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 
 import { Colors } from "@/constants/colors";
+import type { AppColors } from "@/constants/colors";
 import { Theme } from "@/constants/theme";
 
 /**
@@ -19,22 +20,34 @@ interface CardProps extends PropsWithChildren {
   style?: StyleProp<ViewStyle>;
   padded?: boolean;
   accessibilityLabel?: string;
+  // Optional palette override — pass useTheme().colors from a screen that
+  // supports dark mode. Defaults to the static (always-light) Colors, so
+  // every screen that doesn't pass this looks exactly as before.
+  colors?: AppColors;
 }
 
-function variantStyle(variant: CardVariant): StyleProp<ViewStyle> {
+function variantStyle(variant: CardVariant, colors: AppColors): StyleProp<ViewStyle> {
   switch (variant) {
     case "outline":
-      return { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border };
+      return { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border };
     case "soft":
-      return { backgroundColor: Colors.surfaceElevated };
+      return { backgroundColor: colors.surfaceElevated };
     default:
-      return { backgroundColor: Colors.surface, ...Theme.shadow.sm };
+      return { backgroundColor: colors.surface, ...Theme.shadow.sm };
   }
 }
 
-export function Card({ children, variant = "surface", onPress, style, padded = true, accessibilityLabel }: CardProps) {
+export function Card({
+  children,
+  variant = "surface",
+  onPress,
+  style,
+  padded = true,
+  accessibilityLabel,
+  colors = Colors,
+}: CardProps) {
   const content = (
-    <View style={[styles.base, variantStyle(variant), padded && styles.padded, style]}>{children}</View>
+    <View style={[styles.base, variantStyle(variant, colors), padded && styles.padded, style]}>{children}</View>
   );
 
   if (!onPress) return content;

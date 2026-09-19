@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DarkColors, LightColors } from "@/constants/colors";
+import type { AppColors } from "@/constants/colors";
 
 /**
  * ThemeContext — global dark-mode flag, owned by the Infrastructure &
@@ -8,9 +10,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  *
  * Scope note: ships `isDark` + a persisted toggle, applied to the
  * surfaces this member owns (Side Menu, Settings, Contact Us, Learn
- * More). Re-skinning every other screen with `isDark` is future work
- * for whoever owns them — `useTheme()` is exported so any screen can
- * opt in later without touching this file.
+ * More) via the `colors` this context resolves. Re-skinning every other
+ * screen with `isDark`/`colors` is future work for whoever owns them —
+ * `useTheme()` is exported so any screen can opt in later without
+ * touching this file.
  */
 
 const STORAGE_KEY = "gig-music-player:dark-mode";
@@ -19,6 +22,10 @@ interface ThemeContextValue {
   isDark: boolean;
   toggleDark: () => void;
   setDark: (value: boolean) => void;
+  // The palette matching the current isDark value. Screens that want to
+  // support dark mode read colors from here instead of importing the
+  // static `Colors` (always-light) from constants/colors.ts directly.
+  colors: AppColors;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -46,6 +53,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       isDark,
       toggleDark: () => setIsDark((current) => !current),
       setDark: setIsDark,
+      colors: isDark ? DarkColors : LightColors,
     }),
     [isDark],
   );

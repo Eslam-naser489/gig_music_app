@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Colors } from "@/constants/colors";
+import type { AppColors } from "@/constants/colors";
 import { Theme } from "@/constants/theme";
 
 /**
@@ -20,15 +21,20 @@ interface IconButtonProps {
   color?: string;
   variant?: "filled" | "plain";
   accessibilityLabel: string;
+  // Optional palette override — pass useTheme().colors from a screen that
+  // supports dark mode. Only affects the "filled" variant's background.
+  // Defaults to the static (always-light) Colors.
+  colors?: AppColors;
 }
 
 export function IconButton({
   icon,
   onPress,
   size = 20,
-  color = Colors.textPrimary,
+  color,
   variant = "filled",
   accessibilityLabel,
+  colors = Colors,
 }: IconButtonProps) {
   return (
     <Pressable
@@ -38,11 +44,11 @@ export function IconButton({
       hitSlop={Theme.hitSlop}
       style={({ pressed }) => [
         styles.base,
-        variant === "filled" && styles.filled,
+        variant === "filled" && { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
         pressed && styles.pressed,
       ]}
     >
-      <Ionicons name={icon} size={size} color={color} />
+      <Ionicons name={icon} size={size} color={color ?? colors.textPrimary} />
     </Pressable>
   );
 }
@@ -54,11 +60,6 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.md,
     alignItems: "center",
     justifyContent: "center",
-  },
-  filled: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
   },
   pressed: { transform: [{ scale: 0.94 }] },
 });

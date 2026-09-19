@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 
 import { Header } from "@/components/layout/header";
 import { Card } from "@/components/ui/card";
-import { Colors } from "@/constants/colors";
+import { useTheme } from "@/context/theme_context";
 import { Typography } from "@/constants/Typography";
 import { Theme } from "@/constants/theme";
 
@@ -27,59 +27,61 @@ const FEATURES: Feature[] = [
  * Learn More / About screen — owned by the Infrastructure & Layout member.
  */
 export default function LearnMoreScreen() {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.screen}>
-      <Header title="Learn More" showBack />
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      <Header title="Learn More" showBack colors={colors} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.hero}>
+        <View style={[styles.hero, { backgroundColor: colors.accent }]}>
           <Ionicons name="musical-notes" size={28} color="#FFFFFF" />
           <Text style={styles.heroTitle}>GIG Music Player</Text>
           <Text style={styles.heroSubtitle}>Your music, organized and always one tap away.</Text>
         </View>
 
-        <Text style={[Typography.bodyBold, styles.sectionTitle]}>What you can do</Text>
+        <Text style={[Typography.bodyBold, styles.sectionTitle, { color: colors.textPrimary }]}>What you can do</Text>
         <View style={styles.featureList}>
           {FEATURES.map((feature) => (
-            <Card key={feature.title} variant="outline" style={styles.featureCard}>
+            <Card key={feature.title} variant="outline" style={styles.featureCard} colors={colors}>
               <View style={styles.featureRow}>
-                <View style={styles.featureIconTile}>
-                  <Ionicons name={feature.icon} size={18} color={Colors.accent} />
+                <View style={[styles.featureIconTile, { backgroundColor: colors.accentLight }]}>
+                  <Ionicons name={feature.icon} size={18} color={colors.accent} />
                 </View>
                 <View style={styles.featureTextWrap}>
-                  <Text style={[Typography.bodyBold, { color: Colors.textPrimary }]}>{feature.title}</Text>
-                  <Text style={[Typography.caption, { color: Colors.textSecondary, marginTop: 2 }]}>{feature.description}</Text>
+                  <Text style={[Typography.bodyBold, { color: colors.textPrimary }]}>{feature.title}</Text>
+                  <Text style={[Typography.caption, { color: colors.textSecondary, marginTop: 2 }]}>{feature.description}</Text>
                 </View>
               </View>
             </Card>
           ))}
         </View>
 
-        <Text style={[Typography.bodyBold, styles.sectionTitle]}>Built by</Text>
-        <Card variant="outline" style={styles.buildCard}>
-          <Text style={[Typography.body, { color: Colors.textSecondary }]}>
+        <Text style={[Typography.bodyBold, styles.sectionTitle, { color: colors.textPrimary }]}>Built by</Text>
+        <Card variant="outline" style={styles.buildCard} colors={colors}>
+          <Text style={[Typography.body, { color: colors.textSecondary }]}>
             A graduation project built by a 5-person team — authentication, discovery &amp; home, the
             music player, playlists &amp; liked songs, and the shared layout &amp; infrastructure
             you're looking at right now.
           </Text>
         </Card>
 
-        <Card variant="outline" style={styles.linkCard} onPress={() => Linking.openURL("https://docs.expo.dev")}>
+        <Card variant="outline" style={styles.linkCard} colors={colors} onPress={() => Linking.openURL("https://docs.expo.dev")}>
           <View style={styles.linkRow}>
-            <Ionicons name="book-outline" size={18} color={Colors.accent} />
-            <Text style={[Typography.bodyBold, { color: Colors.textPrimary, flex: 1 }]}>Built with Expo &amp; React Native</Text>
-            <Ionicons name="open-outline" size={16} color={Colors.textTertiary} />
+            <Ionicons name="book-outline" size={18} color={colors.accent} />
+            <Text style={[Typography.bodyBold, { color: colors.textPrimary, flex: 1 }]}>Built with Expo &amp; React Native</Text>
+            <Ionicons name="open-outline" size={16} color={colors.textTertiary} />
           </View>
         </Card>
 
-        <Text style={styles.version}>Version 1.0.0</Text>
+        <Text style={[styles.version, { color: colors.textTertiary }]}>Version 1.0.0</Text>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: Colors.background },
+  screen: { flex: 1 },
   content: { paddingHorizontal: Theme.spacing.lg, paddingBottom: 48 },
   hero: {
     borderRadius: Theme.borderRadius.xl,
@@ -87,11 +89,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Theme.spacing.sm,
     marginBottom: Theme.spacing.xxl,
-    backgroundColor: Colors.accent,
   },
   heroTitle: { fontSize: 22, fontWeight: "800", color: "#FFFFFF" },
   heroSubtitle: { fontSize: 14, color: "rgba(255,255,255,0.85)", textAlign: "center" },
-  sectionTitle: { marginTop: Theme.spacing.xl, marginBottom: Theme.spacing.sm, color: Colors.textPrimary },
+  sectionTitle: { marginTop: Theme.spacing.xl, marginBottom: Theme.spacing.sm },
   featureList: { gap: Theme.spacing.sm },
   featureCard: { padding: 0 },
   featureRow: {
@@ -105,7 +106,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Theme.borderRadius.sm,
-    backgroundColor: Colors.accentLight,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
   },
-  version: { marginTop: Theme.spacing.xxl, textAlign: "center", fontSize: 12, color: Colors.textTertiary },
+  version: { marginTop: Theme.spacing.xxl, textAlign: "center", fontSize: 12 },
 });

@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Colors } from "@/constants/colors";
+import type { AppColors } from "@/constants/colors";
 import { Theme } from "@/constants/theme";
 
 /**
@@ -25,6 +26,9 @@ interface ButtonProps {
   disabled?: boolean;
   fullWidth?: boolean;
   accessibilityLabel?: string;
+  // Optional palette override — pass useTheme().colors from a screen that
+  // supports dark mode. Defaults to the static (always-light) Colors.
+  colors?: AppColors;
 }
 
 const SIZE_STYLES: Record<
@@ -36,32 +40,32 @@ const SIZE_STYLES: Record<
   lg: { height: 56, paddingHorizontal: Theme.spacing.xxl, fontSize: 16, iconSize: 20 },
 };
 
-function textColor(variant: ButtonVariant): string {
+function textColor(variant: ButtonVariant, colors: AppColors): string {
   switch (variant) {
     case "primary":
     case "danger":
-      return Colors.textInverse;
+      return colors.textInverse;
     case "secondary":
-      return Colors.accentDark;
+      return colors.accentDark;
     case "outline":
     case "ghost":
     default:
-      return Colors.textPrimary;
+      return colors.textPrimary;
   }
 }
 
-function variantStyle(variant: ButtonVariant) {
+function variantStyle(variant: ButtonVariant, colors: AppColors) {
   switch (variant) {
     case "primary":
-      return { backgroundColor: Colors.accent };
+      return { backgroundColor: colors.accent };
     case "secondary":
-      return { backgroundColor: Colors.accentLight };
+      return { backgroundColor: colors.accentLight };
     case "outline":
-      return { backgroundColor: "transparent", borderWidth: 1.5, borderColor: Colors.border };
+      return { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.border };
     case "ghost":
       return { backgroundColor: "transparent" };
     case "danger":
-      return { backgroundColor: Colors.error };
+      return { backgroundColor: colors.error };
     default:
       return {};
   }
@@ -78,10 +82,11 @@ export function Button({
   disabled = false,
   fullWidth = false,
   accessibilityLabel,
+  colors = Colors,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
   const sizeStyle = SIZE_STYLES[size];
-  const color = textColor(variant);
+  const color = textColor(variant, colors);
 
   return (
     <Pressable
@@ -94,7 +99,7 @@ export function Button({
         styles.base,
         { height: sizeStyle.height, paddingHorizontal: sizeStyle.paddingHorizontal },
         fullWidth && styles.fullWidth,
-        variantStyle(variant),
+        variantStyle(variant, colors),
         isDisabled && styles.disabled,
         pressed && !isDisabled && styles.pressed,
       ]}

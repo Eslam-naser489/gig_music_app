@@ -6,7 +6,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 const ACCENT = "#FF5A3C";
 const MUTED = "#999";
 
-export default function PlayerControls() {
+interface PlayerControlsProps {
+  // Optional — when passed, a heart/like button renders at the right end
+  // of the same row as the rest of the transport controls.
+  isLiked?: boolean;
+  onLikePress?: () => void;
+}
+
+export default function PlayerControls({ isLiked, onLikePress }: PlayerControlsProps) {
   const {
     isPlaying,
     shuffle,
@@ -57,6 +64,20 @@ export default function PlayerControls() {
           {repeat === "one" && <Text style={styles.badge}>1</Text>}
         </View>
       </Pressable>
+
+      {onLikePress ? (
+        <Pressable
+          onPress={onLikePress}
+          hitSlop={10}
+          accessibilityLabel={isLiked ? "Unlike" : "Like"}
+        >
+          <Ionicons
+            name={isLiked ? "heart" : "heart-outline"}
+            size={24}
+            color={isLiked ? ACCENT : MUTED}
+          />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
