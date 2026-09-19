@@ -38,7 +38,14 @@ export default function PlaylistDetail() {
   // shape (same helper Home/Search use) and start playback with this
   // playlist as the queue before navigating, same pattern as everywhere
   // else — the player screen's own fallback only checks /recommendations/.
+  //
+  // Guarded against `playlist` being null: the row itself only renders once
+  // `playlist` is loaded, but this handler is recreated on every render and
+  // can still be invoked from a stale closure (e.g. a state update firing
+  // between render and the tap, or Fast Refresh during development) — the
+  // null check turns that into a harmless no-op instead of a crash.
   const handleSongPress = (track: any) => {
+    if (!playlist || !playlist.tracks) return;
     const queue = playlist.tracks.map(mapTrack);
     playSong(mapTrack(track), queue);
     router.push(`/player/${track.id}`);
