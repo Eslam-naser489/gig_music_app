@@ -4,10 +4,12 @@ import { Colors } from "@/constants/colors";
 import { Typography } from "@/constants/Typography";
 import { useLikedSongs } from "@/context/liked_songs_context";
 import { useSideMenu } from "@/context/side_menu_context";
+import { usePlayer } from "@/hooks/use_player";
 import { getLikedSongs } from "@/services/liked_service";
-import { useFocusEffect } from "expo-router";
+import { mapTrack } from "@/services/music_service";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LikedSongs() {
@@ -16,6 +18,18 @@ export default function LikedSongs() {
   const [error, setError] = useState("");
   const { likedIds, toggleLike, error: contextError } = useLikedSongs();
   const sideMenu = useSideMenu();
+  const router = useRouter();
+  const { playSong } = usePlayer();
+
+  // Same missing-onPress bug as the playlist screen — tapping a row here
+  // did nothing because only the heart icon was wired up (to unlike, not
+  // play). Map the raw track and start playback with this list as the
+  // queue before navigating, matching Home/Search/Playlist.
+  const handleSongPress = (track: any) => {
+    const queue = songs.map(mapTrack);
+    playSong(mapTrack(track), queue);
+    router.push(`/player/${track.id}`);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -68,11 +82,13 @@ export default function LikedSongs() {
       <FlatList
         data={songs}
         renderItem={({ item }) => (
-          <SongListItem
-            song={item}
-            isLiked={likedIds.includes(item.id)}
-            onLikePress={() => handleLikePress(item.id)}
-          />
+          <Pressable onPress={() => handleSongPress(item)}>
+            <SongListItem
+              song={item}
+              isLiked={likedIds.includes(item.id)}
+              onLikePress={() => handleLikePress(item.id)}
+            />
+          </Pressable>
         )}
         keyExtractor={(item) => item.id.toString()}
       />

@@ -1,6 +1,8 @@
 import SongListItem from "@/components/play_lists/song_list_item";
 import { Colors } from "@/constants/colors";
 import { Typography } from "@/constants/Typography";
+import { usePlayer } from "@/hooks/use_player";
+import { mapTrack } from "@/services/music_service";
 import {
   addTrackToPlaylist,
   getAllTracks,
@@ -14,6 +16,7 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
+  Pressable,
   Text,
   TouchableOpacity,
   View,
@@ -28,6 +31,18 @@ export default function PlaylistDetail() {
   const [addVisible, setAddVisible] = useState(false);
   const [allTracks, setAllTracks] = useState<any[]>([]);
   const router = useRouter();
+  const { playSong } = usePlayer();
+
+  // Tapping a song here was doing nothing — the row had no onPress at all,
+  // so playback never started. Map the raw backend tracks to our Song
+  // shape (same helper Home/Search use) and start playback with this
+  // playlist as the queue before navigating, same pattern as everywhere
+  // else — the player screen's own fallback only checks /recommendations/.
+  const handleSongPress = (track: any) => {
+    const queue = playlist.tracks.map(mapTrack);
+    playSong(mapTrack(track), queue);
+    router.push(`/player/${track.id}`);
+  };
 
   useEffect(() => {
     getPlaylistById(playlListId as string)
@@ -121,12 +136,14 @@ export default function PlaylistDetail() {
           <FlatList
             data={playlist.tracks}
             renderItem={({ item }) => (
-              <SongListItem
-                song={item}
-                isLiked={false}
-                onLikePress={() => handleRemoveTrack(item.id)}
-                iconName="remove-circle-outline"
-              />
+              <Pressable onPress={() => handleSongPress(item)}>
+                <SongListItem
+                  song={item}
+                  isLiked={false}
+                  onLikePress={() => handleRemoveTrack(item.id)}
+                  iconName="remove-circle-outline"
+                />
+              </Pressable>
             )}
             keyExtractor={(item) => item.id.toString()}
           />
