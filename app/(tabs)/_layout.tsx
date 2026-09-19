@@ -13,7 +13,6 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: Colors.textSecondary,
       }}
     >
-      <Tabs.Screen name="index" options={{ href: null }} />
       <Tabs.Screen
         name="home"
         options={{
