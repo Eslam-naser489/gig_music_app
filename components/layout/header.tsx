@@ -33,7 +33,16 @@ export function Header({ title, showBack = false, hideLeading = false, rightIcon
 
   const handleLeadingPress = () => {
     if (showBack) {
-      router.back();
+      // If this screen was opened with no back history (e.g. a dev
+      // Fast Refresh reset navigation state, or the app landed here
+      // directly), router.back() silently does nothing and logs a
+      // "GO_BACK not handled" warning, leaving the user stuck. Fall
+      // back to Home so the button always does something.
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/(tabs)/home");
+      }
     } else {
       sideMenu.show();
     }

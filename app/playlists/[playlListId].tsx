@@ -88,7 +88,7 @@ export default function PlaylistDetail() {
             }}
           >
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/play_list"))}
               style={{ padding: 4 }}
             >
               <Ionicons

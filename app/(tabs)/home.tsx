@@ -8,12 +8,20 @@ import RecommendedSection from "@/components/home/recommended_section";
 import MyPlaylistSection from "@/components/home/my_play_list_section";
 import { IconButton } from "@/components/ui/icon_button";
 import { useSideMenu } from "@/context/side_menu_context";
+import { usePlayer } from "@/hooks/use_player";
 
 export default function HomeScreen() {
   const router = useRouter();
   const sideMenu = useSideMenu();
+  const { playSong } = usePlayer();
 
-  const handleSongPress = (song: Song) => {
+  // Start playback from the list the user tapped in (so next/previous have
+  // a real queue) *before* navigating — the player screen only re-fetches
+  // recommendations as a fallback for a direct/deep link open, and that
+  // fallback list won't always contain this exact song (e.g. it came from
+  // "My Playlist" or search instead), which was showing as "Song not found".
+  const handleSongPress = (song: Song, queue: Song[]) => {
+    playSong(song, queue);
     router.push(`/player/${song.id}`);
   };
 

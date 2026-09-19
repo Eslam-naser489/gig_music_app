@@ -1,4 +1,5 @@
 // context/player_context.tsx
+import { getStoredToken } from "@/services/apiClient";
 import { Song } from "@/types";
 import {
     setAudioModeAsync,
@@ -46,28 +47,73 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState<RepeatMode>("off");
+  // Set when the audio source itself fails to load/play (bad URL, network,
+  // blocked mixed content, etc). Distinct from the "no audio file at all"
+  // case below, since that one silently does nothing to the play button
+  // otherwise — this way something always shows up if playback breaks.
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
 
   const currentSong = currentIndex >= 0 ? (queue[currentIndex] ?? null) : null;
 
   // Derived error: no state update needed
   const error =
-    currentSong && !currentSong.audioUrl ? "This song has no audio file" : null;
+    currentSong && !currentSong.audioUrl
+      ? "This song has no audio file"
+      : playbackError;
 
   // Play audio even when the phone is on silent
   useEffect(() => {
     setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
   }, []);
 
-  // Load and play whenever the current song changes
+  // Load and play whenever the current song changes.
+  //
+  // The /stream/ endpoint that audioUrl points to requires auth (it 401s
+  // with "Authentication credentials were not provided" otherwise) — the
+  // player was requesting it with no header at all, so it always failed to
+  // load with no visible error, which looked like "the play button does
+  // nothing". expo-audio's source accepts a `headers` option for exactly
+  // this, so attach the same Bearer token apiClient uses for API calls.
   useEffect(() => {
     if (!currentSong?.audioUrl) return;
-    try {
-      player.replace({ uri: currentSong.audioUrl });
-      player.play();
-    } catch (e) {
-      console.warn("Could not play song", e);
-    }
+    let cancelled = false;
+    setPlaybackError(null);
+    (async () => {
+      try {
+        const token = await getStoredToken();
+        if (cancelled) return;
+        player.replace({
+          uri: currentSong.audioUrl,
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
+        const playResult: any = player.play();
+        // player.play() isn't guaranteed to return a promise on every
+        // platform, so only attach a rejection handler if it does.
+        if (playResult && typeof playResult.catch === "function") {
+          playResult.catch((e: any) => {
+            console.warn("Could not play song", e);
+            if (!cancelled) setPlaybackError("Couldn't play this song");
+          });
+        }
+      } catch (e) {
+        console.warn("Could not play song", e);
+        if (!cancelled) setPlaybackError("Couldn't play this song");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [currentSong?.id, currentSong?.audioUrl, player]);
+
+  // expo-audio surfaces a load/playback error on the status object itself
+  // (e.g. the network request for the stream URL failing after replace()
+  // already resolved) — catch that case too, not just the synchronous throw.
+  useEffect(() => {
+    if ((status as any)?.error) {
+      console.warn("Player status error", (status as any).error);
+      setPlaybackError("Couldn't play this song");
+    }
+  }, [(status as any)?.error]);
 
   const playSong = useCallback((song: Song, newQueue?: Song[]) => {
     const list = newQueue && newQueue.length ? newQueue : [song];
@@ -85,7 +131,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       if (status.duration > 0 && status.currentTime >= status.duration - 0.5) {
         player.seekTo(0);
       }
-      player.play();
+      try {
+        const playResult: any = player.play();
+        if (playResult && typeof playResult.catch === "function") {
+          playResult.catch((e: any) => {
+            console.warn("Could not play song", e);
+            setPlaybackError("Couldn't play this song");
+          });
+        }
+      } catch (e) {
+        console.warn("Could not play song", e);
+        setPlaybackError("Couldn't play this song");
+      }
     }
   }, [
     currentSong,

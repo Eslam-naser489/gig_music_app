@@ -14,11 +14,23 @@ import { Theme } from "@/constants/theme";
 export function BottomNavigation({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
+  // Routes registered with `options={{ href: null }}` (e.g. a redirect-only
+  // "index" route inside this group) opt out of the tab bar entirely — the
+  // default Tabs tab bar honors that automatically, but a custom `tabBar`
+  // has to filter it out itself, or it shows up as an extra unwanted tab.
+  const visibleRoutes = state.routes.filter(
+    (route) =>
+      (descriptors[route.key].options as typeof descriptors[string]["options"] & {
+        href?: string | null;
+      }).href !== null,
+  );
+  const focusedKey = state.routes[state.index]?.key;
+
   return (
     <View style={[styles.wrap, { paddingBottom: (insets.bottom || Theme.spacing.md) + 4 }]}>
-      {state.routes.map((route, index) => {
+      {visibleRoutes.map((route) => {
         const { options } = descriptors[route.key];
-        const focused = state.index === index;
+        const focused = focusedKey === route.key;
         const label = (typeof options.title === "string" ? options.title : route.name) as string;
         const color = focused ? "#FFFFFF" : Colors.textSecondary;
 

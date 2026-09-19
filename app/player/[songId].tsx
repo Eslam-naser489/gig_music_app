@@ -55,7 +55,7 @@ export default function NowPlayingScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.message}>Song not found</Text>
-        <Pressable onPress={() => router.back()}>
+        <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/home"))}>
           <Text style={styles.link}>Go back</Text>
         </Pressable>
       </View>
@@ -65,7 +65,10 @@ export default function NowPlayingScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={10}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/home"))}
+          hitSlop={10}
+        >
           <Ionicons name="chevron-down" size={28} color="#171827" />
         </Pressable>
         <Text style={styles.headerTitle}>Now Playing</Text>
@@ -93,7 +96,17 @@ export default function NowPlayingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAF9FC", paddingHorizontal: 24 },
+  // maxWidth + alignSelf keep this from blowing up to full window width on
+  // web/desktop browsers ("100%" on native just means "fill the phone
+  // screen", but on a wide browser window it means the actual window width).
+  container: {
+    flex: 1,
+    backgroundColor: "#FAF9FC",
+    paddingHorizontal: 24,
+    width: "100%",
+    maxWidth: 480,
+    alignSelf: "center",
+  },
   center: {
     flex: 1,
     justifyContent: "center",

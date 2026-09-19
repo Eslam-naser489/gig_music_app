@@ -14,7 +14,7 @@ import { getRecommendedSongs } from "@/services/music_service";
 
 
 interface Props {
-  onSongPress?: (song: Song) => void;
+  onSongPress?: (song: Song, queue: Song[]) => void;
 }
 
 export default function RecommendedSection({ onSongPress }: Props) {
@@ -54,7 +54,7 @@ export default function RecommendedSection({ onSongPress }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => onSongPress?.(item)}
+            onPress={() => onSongPress?.(item, songs)}
             activeOpacity={0.8}
           >
             <Image source={{ uri: item.coverUrl }} style={styles.cover} />

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '../services/authService';
-import { getStoredToken, saveToken, clearTokens } from '../services/apiClient';
+import { getStoredToken, saveToken, saveRefreshToken, clearTokens } from '../services/apiClient';
 
 interface User {
   id: string | number;
@@ -60,6 +60,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!response.access) throw new Error('No access token returned from server');
 
     await saveToken(response.access);
+    // Needed so apiClient can silently refresh the access token later
+    // instead of every screen breaking with a 401 once it expires.
+    if (response.refresh) await saveRefreshToken(response.refresh);
 
     try {
       const userData = await authService.getMe();
@@ -75,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (response?.access) {
       await saveToken(response.access);
+      if (response.refresh) await saveRefreshToken(response.refresh);
       try {
         const userData = await authService.getMe();
         setUser(userData);

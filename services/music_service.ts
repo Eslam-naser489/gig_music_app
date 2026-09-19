@@ -5,13 +5,29 @@ import { apiClient } from './apiClient';
 // snake_case fields. We normalize them to our app's Song/Playlist shape here
 // so the rest of the app never has to know about the raw API format.
 
-function mapTrack(raw: any): Song {
+// The backend builds `stream_url` as an absolute link using the request's
+// scheme, but behind Railway's proxy it comes back as `http://` even though
+// the API itself is only reachable over `https://` (see ApiConfig.baseUrl).
+// On web this is silently blocked as mixed content once the app runs on
+// https, and on native it can hit Android's cleartext-traffic block — the
+// symptom in both cases is "nothing happens" when you press play, not a
+// visible error. Forcing https here (same host, same working TLS) fixes it.
+function toHttps(url: string): string {
+  return url.startsWith('http://') ? 'https://' + url.slice('http://'.length) : url;
+}
+
+export function mapTrack(raw: any): Song {
+  const rawAudioUrl = raw.stream_url ?? raw.audio_url ?? raw.audioUrl ?? raw.file_url ?? '';
   return {
     id: String(raw.id),
     title: raw.title ?? '',
     artist: raw.artist ?? raw.artist_name ?? '',
     coverUrl: raw.cover_url ?? raw.coverUrl ?? raw.cover ?? '',
-    audioUrl: raw.audio_url ?? raw.audioUrl ?? raw.file_url ?? '',
+    // The backend's actual field is `stream_url` (a proxy endpoint —
+    // /api/tracks/<id>/stream/ — not a direct file link). Keep the other
+    // names as fallbacks in case a different endpoint ever returns one of
+    // those instead.
+    audioUrl: rawAudioUrl ? toHttps(rawAudioUrl) : '',
     duration: raw.duration ?? raw.duration_seconds ?? 0,
   };
 }
@@ -28,7 +44,7 @@ function mapPlaylist(raw: any): Playlist {
 
 // DRF list endpoints are often paginated ({ results: [...], count, next, previous }),
 // but may also return a plain array depending on the ViewSet settings. Handle both.
-function extractList(data: any): any[] {
+export function extractList(data: any): any[] {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.results)) return data.results;
   return [];
@@ -84,6 +100,25 @@ export async function getRecentlyPlayed(): Promise<Song[]> {
     return extractList(data).map(mapTrack);
   } catch (error) {
     console.warn('[music_service] getRecentlyPlayed failed:', error);
+    return [];
+  }
+}
+
+// There's no dedicated /search/ endpoint on the backend yet, so search
+// works by fetching a working set of tracks and filtering client-side by
+// title/artist. Swap this for a real `?search=` query once the backend
+// adds one — the Song[] contract this returns won't need to change.
+export async function searchTracks(query: string): Promise<Song[]> {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  try {
+    const { data } = await apiClient.get('/tracks/?limit=100');
+    const all = extractList(data).map(mapTrack);
+    return all.filter(
+      (song) => song.title.toLowerCase().includes(q) || song.artist.toLowerCase().includes(q),
+    );
+  } catch (error) {
+    console.warn('[music_service] searchTracks failed:', error);
     return [];
   }
 }

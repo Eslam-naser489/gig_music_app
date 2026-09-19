@@ -14,7 +14,7 @@ import { getMyPlaylist } from "@/services/music_service";
 
 
 interface Props {
-  onSongPress?: (song: Song) => void;
+  onSongPress?: (song: Song, queue: Song[]) => void;
 }
 
 export default function MyPlaylistSection({ onSongPress }: Props) {
@@ -56,7 +56,7 @@ export default function MyPlaylistSection({ onSongPress }: Props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => onSongPress?.(item)}
+            onPress={() => onSongPress?.(item, playlist.songs)}
             activeOpacity={0.8}
           >
             <Image source={{ uri: item.coverUrl }} style={styles.cover} />
